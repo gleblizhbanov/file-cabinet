@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace FileCabinetApp
 {
@@ -11,12 +12,14 @@ namespace FileCabinetApp
         private const int ExplanationHelpIndex = 2;
 
         private static FileCabinetService fileCabinetService = new FileCabinetService();
+        private static CultureInfo cultureInfo = new CultureInfo("en-US");
         private static bool isRunning = true;
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
             new Tuple<string, Action<string>>("stat", Stat),
+            new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("exit", Exit),
         };
 
@@ -24,6 +27,7 @@ namespace FileCabinetApp
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "stat", "prints the record count", "The 'stat' command prints the record count." },
+            new string[] { "create", "allows you to create a new record", "The 'create' command allows you to create a new record." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
         };
 
@@ -104,6 +108,21 @@ namespace FileCabinetApp
         {
             var recordsCount = Program.fileCabinetService.GetStat();
             Console.WriteLine($"{recordsCount} record(s).");
+        }
+
+        private static void Create(string parameters)
+        {
+            Console.Write("First name: ");
+            string firstName = Console.ReadLine();
+
+            Console.Write("Last name: ");
+            string lastName = Console.ReadLine();
+
+            Console.Write("Date of birth: ");
+            DateTime dateOfBirth = DateTime.Parse(Console.ReadLine(), cultureInfo);
+
+            int id = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth);
+            Console.WriteLine($"Record #{id} is created.");
         }
     }
 }
