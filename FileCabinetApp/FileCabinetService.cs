@@ -19,7 +19,7 @@ namespace FileCabinetApp
         public FileCabinetRecord[] GetRecords()
         {
             // TODO: Implement this method.
-            return new FileCabinetRecord[] { };
+            return Array.Empty<FileCabinetRecord>();
         }
 
         public int GetStat()
