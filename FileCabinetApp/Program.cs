@@ -12,13 +12,13 @@ namespace FileCabinetApp
         private const int ExplanationHelpIndex = 2;
 
         private static FileCabinetService fileCabinetService = new FileCabinetService();
-        private static CultureInfo cultureInfo = new CultureInfo("en-US");
         private static bool isRunning = true;
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
             new Tuple<string, Action<string>>("stat", Stat),
+            new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("exit", Exit),
         };
@@ -27,6 +27,7 @@ namespace FileCabinetApp
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "stat", "prints the record count", "The 'stat' command prints the record count." },
+            new string[] { "list", "prints the list of all records", "The 'stat' command prints the list of all records." },
             new string[] { "create", "allows you to create a new record", "The 'create' command allows you to create a new record." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
         };
@@ -119,10 +120,19 @@ namespace FileCabinetApp
             string lastName = Console.ReadLine();
 
             Console.Write("Date of birth: ");
-            DateTime dateOfBirth = DateTime.Parse(Console.ReadLine(), cultureInfo);
+            DateTime dateOfBirth = DateTime.Parse(Console.ReadLine(), CultureInfo.InvariantCulture);
 
             int id = fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth);
             Console.WriteLine($"Record #{id} is created.");
+        }
+
+        private static void List(string parameters)
+        {
+            var records = fileCabinetService.GetRecords();
+            foreach (var record in records)
+            {
+                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}");
+            }
         }
     }
 }
