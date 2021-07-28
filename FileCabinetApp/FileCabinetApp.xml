@@ -4,5 +4,20 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetApp.Sex">
+            <summary>
+            Represents person's sex.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.Sex.Male">
+            <summary>
+            Represents Male sex
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.Sex.Female">
+            <summary>
+            Represents Female sex
+            </summary>
+        </member>
     </members>
 </doc>
