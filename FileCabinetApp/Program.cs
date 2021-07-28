@@ -122,7 +122,7 @@ namespace FileCabinetApp
             DateTime dateOfBirth = DateTime.Parse(Console.ReadLine(), CultureInfo.InvariantCulture);
 
             Console.Write("Sex: ");
-            Sex sex = Enum.Parse<Sex>(Console.ReadLine(), ignoreCase: true);
+            Enum.TryParse<Sex>(Console.ReadLine(), ignoreCase: true, out var sex);
 
             Console.Write("Budget (with currency sign): ");
             string budget = Console.ReadLine();

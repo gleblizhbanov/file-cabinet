@@ -12,6 +12,51 @@ namespace FileCabinetApp
 
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, Sex sex, short kidsCount, decimal budget, char currency)
         {
+            if (string.IsNullOrWhiteSpace(firstName))
+            {
+                throw new ArgumentNullException(nameof(firstName));
+            }
+
+            if (firstName.Length is < 2 or > 60)
+            {
+                throw new ArgumentException("The length of the first name is invalid.", nameof(firstName));
+            }
+
+            if (string.IsNullOrWhiteSpace(lastName))
+            {
+                throw new ArgumentNullException(nameof(lastName));
+            }
+
+            if (lastName.Length is < 2 or > 60)
+            {
+                throw new ArgumentException("The length of the last name is invalid.", nameof(lastName));
+            }
+
+            if (dateOfBirth < new DateTime(1950, 1, 1) || dateOfBirth > DateTime.Now)
+            {
+                throw new ArgumentException("The date of birth is invalid.", nameof(dateOfBirth));
+            }
+
+            if (sex is not Sex.Male or Sex.Female)
+            {
+                throw new ArgumentException("The sex is invalid.", nameof(sex));
+            }
+
+            if (budget < 0)
+            {
+                throw new ArgumentException("The budget is negative.", nameof(budget));
+            }
+
+            if (kidsCount < 0)
+            {
+                throw new ArgumentException("The count of kids if negative.", nameof(kidsCount));
+            }
+
+            if (currency is not '$' or '€' or '¥' or '£' or '₩' or '₿' or '₽')
+            {
+                throw new ArgumentException("The currency symbol is invalid.", nameof(currency));
+            }
+
             var record = new FileCabinetRecord
             {
                 Id = this.list.Count + 1,
