@@ -132,8 +132,18 @@ namespace FileCabinetApp
                 Console.Write("Budget (with currency sign): ");
                 string budget = Console.ReadLine();
 
-                char currency = char.IsDigit(budget[0]) ? budget[^1] : budget[0];
-                decimal.TryParse(budget[1..], NumberStyles.None, CultureInfo.InvariantCulture, out var amount);
+                char currency;
+                decimal amount;
+                if (char.IsDigit(budget[0]))
+                {
+                    currency = budget[^1];
+                    amount = decimal.Parse(budget[..^1], NumberStyles.Currency, CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    currency = budget[0];
+                    amount = decimal.Parse(budget[1..], NumberStyles.Currency, CultureInfo.InvariantCulture);
+                }
 
                 Console.Write("Kids count: ");
                 short.TryParse(Console.ReadLine(), NumberStyles.None, CultureInfo.InvariantCulture, out var kidsCount);
@@ -185,18 +195,18 @@ namespace FileCabinetApp
                 Console.Write("Budget (with currency sign): ");
                 string budget = Console.ReadLine();
 
-            char currency;
-            decimal amount;
-            if (char.IsDigit(budget[0]))
-            {
-                currency = budget[^1];
-                amount = decimal.Parse(budget[..^1], NumberStyles.Currency, CultureInfo.InvariantCulture);
-            }
-            else
-            {
-                currency = budget[0];
-                amount = decimal.Parse(budget[1..], NumberStyles.Currency, CultureInfo.InvariantCulture);
-            }
+                char currency;
+                decimal amount;
+                if (char.IsDigit(budget[0]))
+                {
+                    currency = budget[^1];
+                    amount = decimal.Parse(budget[..^1], NumberStyles.Currency, CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    currency = budget[0];
+                    amount = decimal.Parse(budget[1..], NumberStyles.Currency, CultureInfo.InvariantCulture);
+                }
 
                 Console.Write("Kids count: ");
                 short.TryParse(Console.ReadLine(), NumberStyles.None, CultureInfo.InvariantCulture, out var kidsCount);
