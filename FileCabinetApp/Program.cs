@@ -167,30 +167,43 @@ namespace FileCabinetApp
                 return;
             }
 
-            Console.Write("First name: ");
-            string firstName = Console.ReadLine();
+            bool isValid = false;
+            do
+            {
+                Console.Write("First name: ");
+                string firstName = Console.ReadLine();
 
-            Console.Write("Last name: ");
-            string lastName = Console.ReadLine();
+                Console.Write("Last name: ");
+                string lastName = Console.ReadLine();
 
-            Console.Write("Date of birth: ");
-            DateTime.TryParse(Console.ReadLine(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOfBirth);
+                Console.Write("Date of birth: ");
+                DateTime.TryParse(Console.ReadLine(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOfBirth);
 
-            Console.Write("Sex: ");
-            Enum.TryParse<Sex>(Console.ReadLine(), ignoreCase: true, out var sex);
+                Console.Write("Sex: ");
+                Enum.TryParse<Sex>(Console.ReadLine(), ignoreCase: true, out var sex);
 
-            Console.Write("Budget (with currency sign): ");
-            string budget = Console.ReadLine();
+                Console.Write("Budget (with currency sign): ");
+                string budget = Console.ReadLine();
 
-            char currency = char.IsDigit(budget[0]) ? budget[^1] : budget[0];
-            decimal.TryParse(budget[1..], NumberStyles.None, CultureInfo.InvariantCulture, out var amount);
+                char currency = char.IsDigit(budget[0]) ? budget[^1] : budget[0];
+                decimal.TryParse(budget[1..], NumberStyles.None, CultureInfo.InvariantCulture, out var amount);
 
-            Console.Write("Kids count: ");
-            short.TryParse(Console.ReadLine(), NumberStyles.None, CultureInfo.InvariantCulture, out var kidsCount);
+                Console.Write("Kids count: ");
+                short.TryParse(Console.ReadLine(), NumberStyles.None, CultureInfo.InvariantCulture, out var kidsCount);
 
-            FileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, sex, kidsCount, amount, currency);
-
-            Console.WriteLine($"Record {id} is updated.");
+                try
+                {
+                    FileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, sex, kidsCount, amount, currency);
+                    Console.WriteLine($"Record {id} is updated.");
+                    isValid = true;
+                }
+                catch (ArgumentException exception)
+                {
+                    Console.WriteLine(exception.Message);
+                    Console.WriteLine("Please try again.");
+                }
+            }
+            while (!isValid);
         }
 
         private static void List(string parameters)
