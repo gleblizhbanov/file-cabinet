@@ -126,8 +126,19 @@ namespace FileCabinetApp
 
             Console.Write("Budget (with currency sign): ");
             string budget = Console.ReadLine();
-            char currency = char.IsDigit(budget[0]) ? budget[^1] : budget[0];
-            decimal amount = decimal.Parse(budget[1..], NumberStyles.Currency, CultureInfo.InvariantCulture);
+            char currency;
+            decimal amount;
+            if (char.IsDigit(budget[0]))
+            {
+                currency = budget[^1];
+                amount = decimal.Parse(budget[..^1], NumberStyles.Currency, CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                currency = budget[0];
+                amount = decimal.Parse(budget[1..], NumberStyles.Currency, CultureInfo.InvariantCulture);
+            }
+
             Console.Write("Kids count: ");
             short kidsCount = Convert.ToInt16(Console.ReadLine(), CultureInfo.InvariantCulture);
 
