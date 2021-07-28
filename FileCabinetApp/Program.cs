@@ -112,27 +112,43 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
-            Console.Write("First name: ");
-            string firstName = Console.ReadLine();
+            bool isValid = false;
+            do
+            {
+                Console.Write("First name: ");
+                string firstName = Console.ReadLine();
 
-            Console.Write("Last name: ");
-            string lastName = Console.ReadLine();
+                Console.Write("Last name: ");
+                string lastName = Console.ReadLine();
 
-            Console.Write("Date of birth: ");
-            DateTime dateOfBirth = DateTime.Parse(Console.ReadLine(), CultureInfo.InvariantCulture);
+                Console.Write("Date of birth: ");
+                DateTime.TryParse(Console.ReadLine(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOfBirth);
 
-            Console.Write("Sex: ");
-            Enum.TryParse<Sex>(Console.ReadLine(), ignoreCase: true, out var sex);
+                Console.Write("Sex: ");
+                Enum.TryParse<Sex>(Console.ReadLine(), ignoreCase: true, out var sex);
 
-            Console.Write("Budget (with currency sign): ");
-            string budget = Console.ReadLine();
-            char currency = char.IsDigit(budget[0]) ? budget[^1] : budget[0];
-            decimal amount = decimal.Parse(budget[1..], NumberStyles.Currency, CultureInfo.InvariantCulture);
-            Console.Write("Kids count: ");
-            short kidsCount = Convert.ToInt16(Console.ReadLine(), CultureInfo.InvariantCulture);
+                Console.Write("Budget (with currency sign): ");
+                string budget = Console.ReadLine();
 
-            int id = FileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, sex, kidsCount, amount, currency);
-            Console.WriteLine($"Record #{id} is created.");
+                char currency = char.IsDigit(budget[0]) ? budget[^1] : budget[0];
+                decimal.TryParse(budget[1..], NumberStyles.None, CultureInfo.InvariantCulture, out var amount);
+
+                Console.Write("Kids count: ");
+                short.TryParse(Console.ReadLine(), NumberStyles.None, CultureInfo.InvariantCulture, out var kidsCount);
+
+                try
+                {
+                    int id = FileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, sex, kidsCount, amount, currency);
+                    Console.WriteLine($"Record #{id} is created.");
+                    isValid = true;
+                }
+                catch (ArgumentException exception)
+                {
+                    Console.WriteLine(exception.Message);
+                    Console.WriteLine("Please try again.");
+                }
+            }
+            while (!isValid);
         }
 
         private static void List(string parameters)
