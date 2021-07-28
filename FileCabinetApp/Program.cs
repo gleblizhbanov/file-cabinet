@@ -15,8 +15,9 @@ namespace FileCabinetApp
         {
             new ("help", PrintHelp),
             new ("stat", Stat),
-            new ("list", List),
             new ("create", Create),
+            new ("edit", Edit),
+            new ("list", List),
             new ("exit", Exit),
         };
 
@@ -24,8 +25,9 @@ namespace FileCabinetApp
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "stat", "prints the record count", "The 'stat' command prints the record count." },
-            new string[] { "list", "prints the list of all records", "The 'stat' command prints the list of all records." },
             new string[] { "create", "allows you to create a new record", "The 'create' command allows you to create a new record." },
+            new string[] { "edit", "allows you to edit an existing record", "The edit command allows you to edit an existing record." },
+            new string[] { "list", "prints the list of all records", "The 'stat' command prints the list of all records." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
         };
 
@@ -149,6 +151,46 @@ namespace FileCabinetApp
                 }
             }
             while (!isValid);
+        }
+
+        private static void Edit(string parameters)
+        {
+            if (!int.TryParse(parameters, NumberStyles.None, CultureInfo.InvariantCulture, out var id))
+            {
+                Console.WriteLine("Invalid id.");
+                return;
+            }
+
+            if (FileCabinetService.GetStat() < id)
+            {
+                Console.WriteLine($"#{id} record is not found.");
+                return;
+            }
+
+            Console.Write("First name: ");
+            string firstName = Console.ReadLine();
+
+            Console.Write("Last name: ");
+            string lastName = Console.ReadLine();
+
+            Console.Write("Date of birth: ");
+            DateTime.TryParse(Console.ReadLine(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOfBirth);
+
+            Console.Write("Sex: ");
+            Enum.TryParse<Sex>(Console.ReadLine(), ignoreCase: true, out var sex);
+
+            Console.Write("Budget (with currency sign): ");
+            string budget = Console.ReadLine();
+
+            char currency = char.IsDigit(budget[0]) ? budget[^1] : budget[0];
+            decimal.TryParse(budget[1..], NumberStyles.None, CultureInfo.InvariantCulture, out var amount);
+
+            Console.Write("Kids count: ");
+            short.TryParse(Console.ReadLine(), NumberStyles.None, CultureInfo.InvariantCulture, out var kidsCount);
+
+            FileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, sex, kidsCount, amount, currency);
+
+            Console.WriteLine($"Record {id} is updated.");
         }
 
         private static void List(string parameters)

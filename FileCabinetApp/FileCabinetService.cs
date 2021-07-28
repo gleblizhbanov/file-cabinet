@@ -74,6 +74,17 @@ namespace FileCabinetApp
             return record.Id;
         }
 
+        public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, Sex sex, short kidsCount, decimal budget, char currency)
+        {
+            this.list[id - 1].FirstName = firstName;
+            this.list[id - 1].LastName = lastName;
+            this.list[id - 1].DateOfBirth = dateOfBirth;
+            this.list[id - 1].Sex = sex;
+            this.list[id - 1].KidsCount = kidsCount;
+            this.list[id - 1].Budget = budget;
+            this.list[id - 1].Currency = currency;
+        }
+
         public FileCabinetRecord[] GetRecords()
         {
             return this.list.ToArray();
