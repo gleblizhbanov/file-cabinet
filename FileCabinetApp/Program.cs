@@ -18,6 +18,7 @@ namespace FileCabinetApp
             new ("create", Create),
             new ("edit", Edit),
             new ("list", List),
+            new ("find", Find),
             new ("exit", Exit),
         };
 
@@ -26,8 +27,9 @@ namespace FileCabinetApp
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "stat", "prints the record count", "The 'stat' command prints the record count." },
             new string[] { "create", "allows you to create a new record", "The 'create' command allows you to create a new record." },
-            new string[] { "edit", "allows you to edit an existing record", "The edit command allows you to edit an existing record." },
-            new string[] { "list", "prints the list of all records", "The 'stat' command prints the list of all records." },
+            new string[] { "edit", "allows you to edit an existing record", "The 'edit' command allows you to edit an existing record." },
+            new string[] { "list", "prints the list of all records", "The 'list' command prints the list of all records." },
+            new string[] { "find [PROPERTY]", "allows you to find all records with the given value of the property", "The 'find' command allows you to find all records with the given value of the property." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
         };
 
@@ -77,7 +79,7 @@ namespace FileCabinetApp
         {
             if (!string.IsNullOrEmpty(parameters))
             {
-                var index = Array.FindIndex(HelpMessages, 0, HelpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex], parameters, StringComparison.InvariantCultureIgnoreCase));
+                var index = Array.FindIndex(HelpMessages, 0, HelpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex].Split()[0], parameters.Split()[0], StringComparison.InvariantCultureIgnoreCase));
                 if (index >= 0)
                 {
                     Console.WriteLine(HelpMessages[index][Program.ExplanationHelpIndex]);
@@ -110,6 +112,7 @@ namespace FileCabinetApp
         {
             var recordsCount = Program.FileCabinetService.GetStat();
             Console.WriteLine($"{recordsCount} record(s).");
+            Console.WriteLine();
         }
 
         private static void Create(string parameters)
@@ -137,12 +140,12 @@ namespace FileCabinetApp
                 if (char.IsDigit(budget[0]))
                 {
                     currency = budget[^1];
-                    amount = decimal.Parse(budget[..^1], NumberStyles.Currency, CultureInfo.InvariantCulture);
+                    decimal.TryParse(budget[..^1], NumberStyles.Currency, CultureInfo.InvariantCulture, out amount);
                 }
                 else
                 {
                     currency = budget[0];
-                    amount = decimal.Parse(budget[1..], NumberStyles.Currency, CultureInfo.InvariantCulture);
+                    decimal.TryParse(budget[1..], NumberStyles.Currency, CultureInfo.InvariantCulture, out amount);
                 }
 
                 Console.Write("Kids count: ");
@@ -156,9 +159,10 @@ namespace FileCabinetApp
                 }
                 catch (ArgumentException exception)
                 {
-                    Console.WriteLine(exception.Message);
-                    Console.WriteLine("Please try again.");
+                    Console.WriteLine(exception.Message.Split('.')[0] + '.');
                 }
+
+                Console.WriteLine();
             }
             while (!isValid);
         }
@@ -168,12 +172,14 @@ namespace FileCabinetApp
             if (!int.TryParse(parameters, NumberStyles.None, CultureInfo.InvariantCulture, out var id))
             {
                 Console.WriteLine("Invalid id.");
+                Console.WriteLine();
                 return;
             }
 
             if (FileCabinetService.GetStat() < id)
             {
                 Console.WriteLine($"#{id} record is not found.");
+                Console.WriteLine();
                 return;
             }
 
@@ -200,12 +206,12 @@ namespace FileCabinetApp
                 if (char.IsDigit(budget[0]))
                 {
                     currency = budget[^1];
-                    amount = decimal.Parse(budget[..^1], NumberStyles.Currency, CultureInfo.InvariantCulture);
+                    decimal.TryParse(budget[..^1], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
                 }
                 else
                 {
                     currency = budget[0];
-                    amount = decimal.Parse(budget[1..], NumberStyles.Currency, CultureInfo.InvariantCulture);
+                    decimal.TryParse(budget[1..], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
                 }
 
                 Console.Write("Kids count: ");
@@ -219,20 +225,113 @@ namespace FileCabinetApp
                 }
                 catch (ArgumentException exception)
                 {
-                    Console.WriteLine(exception.Message);
-                    Console.WriteLine("Please try again.");
+                    Console.WriteLine(exception.Message.Split('.')[0] + '.');
                 }
+
+                Console.WriteLine();
             }
             while (!isValid);
+        }
+
+        private static void Find(string parameters)
+        {
+            var words = parameters.Split(' ', 2);
+
+            if (words.Length < 2 || !words[1].StartsWith('\"') || !words[1].EndsWith('\"'))
+            {
+                Console.WriteLine("Invalid text to find. It must be in double quotes.");
+                Console.WriteLine();
+                return;
+            }
+
+            bool propertyIsValid = true;
+            FileCabinetRecord[] records = Array.Empty<FileCabinetRecord>();
+            if (words[0].Equals("FirstName", StringComparison.InvariantCultureIgnoreCase))
+            {
+                records = FileCabinetService.FindByFirstName(words[1][1..^1]);
+            }
+            else if (words[0].Equals("LastName", StringComparison.InvariantCultureIgnoreCase))
+            {
+                records = FileCabinetService.FindByLastName(words[1][1..^1]);
+            }
+            else if (words[0].Equals("DateOfBirth", StringComparison.InvariantCultureIgnoreCase))
+            {
+                DateTime.TryParse(words[1][1..^1], CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOfBirth);
+                records = FileCabinetService.FindByDateOfBirth(dateOfBirth);
+            }
+            else if (words[0].Equals("Sex", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Enum.TryParse<Sex>(words[1][1..^1], ignoreCase: true, out var sex);
+                records = FileCabinetService.FindBySex(sex);
+            }
+            else if (words[0].Equals("KidsCount", StringComparison.InvariantCultureIgnoreCase))
+            {
+                short.TryParse(words[1][1..^1], NumberStyles.None, CultureInfo.InvariantCulture, out var kidsCount);
+                records = FileCabinetService.FindByKidsCount(kidsCount);
+            }
+            else if (words[0].Equals("Budget", StringComparison.InvariantCultureIgnoreCase))
+            {
+                char currency;
+                decimal amount;
+                if (char.IsDigit(words[1][1]))
+                {
+                    currency = words[1][^2];
+                    decimal.TryParse(words[1][1..^2], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
+                }
+                else if (char.IsDigit(words[1][^2]))
+                {
+                    currency = words[1][1];
+                    decimal.TryParse(words[1][2..^1], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
+                }
+                else
+                {
+                    amount = default;
+                    currency = default;
+                }
+
+                records = FileCabinetService.FindByBudget(amount, currency);
+            }
+            else
+            {
+                propertyIsValid = false;
+            }
+
+            if (!propertyIsValid)
+            {
+                Console.WriteLine($"There is no {words[0].ToUpperInvariant()} property.");
+            }
+            else if (records.Length == 0)
+            {
+                Console.WriteLine($"There is no record with such value of the {words[0].ToUpperInvariant()} property.");
+            }
+            else
+            {
+                foreach (var record in records)
+                {
+                    Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, {record.Sex}, has {record.KidsCount} kids, budget : {record.Currency}{record.Budget}");
+                }
+            }
+
+            Console.WriteLine();
         }
 
         private static void List(string parameters)
         {
             var records = FileCabinetService.GetRecords();
-            foreach (var record in records)
+
+            if (records.Length == 0)
             {
-                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, {record.Sex}, has {record.KidsCount} kids, budget : {record.Currency}{record.Budget}");
+                Console.WriteLine("There is no records.");
             }
+            else
+            {
+                foreach (var record in records)
+                {
+                    Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, {record.Sex}, has {record.KidsCount} kids, budget : {record.Currency}{record.Budget}");
+                }
+            }
+
+            Console.WriteLine();
         }
     }
 }
