@@ -245,13 +245,18 @@ namespace FileCabinetApp
             }
 
             FileCabinetRecord[] records = Array.Empty<FileCabinetRecord>();
-            if (words[0].Equals("firstname", StringComparison.InvariantCultureIgnoreCase))
+            if (words[0].Equals("FirstName", StringComparison.InvariantCultureIgnoreCase))
             {
                 records = FileCabinetService.FindByFirstName(words[1][1..^1]);
             }
-            else if (words[0].Equals("lastname", StringComparison.InvariantCultureIgnoreCase))
+            else if (words[0].Equals("LastName", StringComparison.InvariantCultureIgnoreCase))
             {
                 records = FileCabinetService.FindByLastName(words[1][1..^1]);
+            }
+            else if (words[0].Equals("DateOfBirth", StringComparison.InvariantCultureIgnoreCase))
+            {
+                DateTime.TryParse(words[1][1..^1], CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOfBirth);
+                records = FileCabinetService.FindByDateOfBirth(dateOfBirth);
             }
 
             if (records.Length == 0)

@@ -168,6 +168,20 @@ namespace FileCabinetApp
             return records.ToArray();
         }
 
+        public FileCabinetRecord[] FindByDateOfBirth(DateTime dateOfBirth)
+        {
+            var records = new List<FileCabinetRecord>();
+            foreach (var record in this.list)
+            {
+                if (dateOfBirth == record.DateOfBirth)
+                {
+                    records.Add(record);
+                }
+            }
+
+            return records.ToArray();
+        }
+
         public FileCabinetRecord[] GetRecords()
         {
             return this.list.ToArray();
