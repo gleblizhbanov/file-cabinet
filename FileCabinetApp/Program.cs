@@ -258,6 +258,11 @@ namespace FileCabinetApp
                 DateTime.TryParse(words[1][1..^1], CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOfBirth);
                 records = FileCabinetService.FindByDateOfBirth(dateOfBirth);
             }
+            else if (words[0].Equals("Sex", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Enum.TryParse<Sex>(words[1][1..^1], ignoreCase: true, out var sex);
+                records = FileCabinetService.FindBySex(sex);
+            }
 
             if (records.Length == 0)
             {

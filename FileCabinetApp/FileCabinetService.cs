@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -174,6 +175,66 @@ namespace FileCabinetApp
             foreach (var record in this.list)
             {
                 if (dateOfBirth == record.DateOfBirth)
+                {
+                    records.Add(record);
+                }
+            }
+
+            return records.ToArray();
+        }
+
+        public FileCabinetRecord[] FindBySex(Sex sex)
+        {
+            var records = new List<FileCabinetRecord>();
+            foreach (var record in this.list)
+            {
+                if (sex == record.Sex)
+                {
+                    records.Add(record);
+                }
+            }
+
+            return records.ToArray();
+        }
+
+        public FileCabinetRecord[] FindByKidsCount(short kidsCount)
+        {
+            var records = new List<FileCabinetRecord>();
+            foreach (var record in this.list)
+            {
+                if (kidsCount == record.KidsCount)
+                {
+                    records.Add(record);
+                }
+            }
+
+            return records.ToArray();
+        }
+
+        public FileCabinetRecord[] FindByBudget(string budget)
+        {
+            if (budget is null)
+            {
+                throw new ArgumentNullException(nameof(budget));
+            }
+
+            char currency;
+            decimal amount;
+            if (char.IsDigit(budget[0]))
+            {
+                currency = budget[^1];
+                decimal.TryParse(budget[..^1], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
+            }
+            else
+            {
+                currency = budget[0];
+                decimal.TryParse(budget[1..], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
+            }
+
+            var records = new List<FileCabinetRecord>();
+            foreach (var record in this.list)
+            {
+                if (currency == record.Currency && amount == record.Budget)
                 {
                     records.Add(record);
                 }
