@@ -244,6 +244,7 @@ namespace FileCabinetApp
                 return;
             }
 
+            bool propertyIsValid = true;
             FileCabinetRecord[] records = Array.Empty<FileCabinetRecord>();
             if (words[0].Equals("FirstName", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -290,8 +291,16 @@ namespace FileCabinetApp
 
                 records = FileCabinetService.FindByBudget(amount, currency);
             }
+            else
+            {
+                propertyIsValid = false;
+            }
 
-            if (records.Length == 0)
+            if (!propertyIsValid)
+            {
+                Console.WriteLine($"There is no {words[0].ToUpperInvariant()} property.");
+            }
+            else if (records.Length == 0)
             {
                 Console.WriteLine($"There is no record with such value of the {words[0].ToUpperInvariant()} property.");
             }
