@@ -263,6 +263,28 @@ namespace FileCabinetApp
                 Enum.TryParse<Sex>(words[1][1..^1], ignoreCase: true, out var sex);
                 records = FileCabinetService.FindBySex(sex);
             }
+            else if (words[0].Equals("KidsCount", StringComparison.InvariantCultureIgnoreCase))
+            {
+                short.TryParse(words[1][1..^1], NumberStyles.None, CultureInfo.InvariantCulture, out var kidsCount);
+                records = FileCabinetService.FindByKidsCount(kidsCount);
+            }
+            else if (words[0].Equals("Budget", StringComparison.InvariantCultureIgnoreCase))
+            {
+                char currency;
+                decimal amount;
+                if (char.IsDigit(words[1][1]))
+                {
+                    currency = words[1][^2];
+                    decimal.TryParse(words[1][1..^2], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
+                }
+                else
+                {
+                    currency = words[1][1];
+                    decimal.TryParse(words[1][2..^1], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
+                }
+
+                records = FileCabinetService.FindByBudget(amount, currency);
+            }
 
             if (records.Length == 0)
             {

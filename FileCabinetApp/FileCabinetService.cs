@@ -211,26 +211,8 @@ namespace FileCabinetApp
             return records.ToArray();
         }
 
-        public FileCabinetRecord[] FindByBudget(string budget)
+        public FileCabinetRecord[] FindByBudget(decimal amount, char currency)
         {
-            if (budget is null)
-            {
-                throw new ArgumentNullException(nameof(budget));
-            }
-
-            char currency;
-            decimal amount;
-            if (char.IsDigit(budget[0]))
-            {
-                currency = budget[^1];
-                decimal.TryParse(budget[..^1], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
-            }
-            else
-            {
-                currency = budget[0];
-                decimal.TryParse(budget[1..], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
-            }
-
             var records = new List<FileCabinetRecord>();
             foreach (var record in this.list)
             {
