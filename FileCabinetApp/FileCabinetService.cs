@@ -11,6 +11,8 @@ namespace FileCabinetApp
     {
         private readonly List<FileCabinetRecord> list = new ();
 
+        private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+
         public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, Sex sex, short kidsCount, decimal budget, char currency)
         {
             if (string.IsNullOrWhiteSpace(firstName))
@@ -72,6 +74,15 @@ namespace FileCabinetApp
 
             this.list.Add(record);
 
+            var upperCaseFirstName = firstName.ToUpperInvariant();
+
+            if (!this.firstNameDictionary.ContainsKey(upperCaseFirstName))
+            {
+                this.firstNameDictionary.Add(upperCaseFirstName, new List<FileCabinetRecord>());
+            }
+
+            this.firstNameDictionary[upperCaseFirstName].Add(record);
+
             return record.Id;
         }
 
@@ -122,6 +133,7 @@ namespace FileCabinetApp
                 throw new ArgumentException("The currency symbol is invalid.", nameof(currency));
             }
 
+            this.firstNameDictionary[this.list[id - 1].FirstName].Remove(this.list[id - 1]);
             this.list[id - 1].FirstName = firstName;
             this.list[id - 1].LastName = lastName;
             this.list[id - 1].DateOfBirth = dateOfBirth;
@@ -129,6 +141,15 @@ namespace FileCabinetApp
             this.list[id - 1].KidsCount = kidsCount;
             this.list[id - 1].Budget = budget;
             this.list[id - 1].Currency = currency;
+
+            var upperCaseFirstName = firstName.ToUpperInvariant();
+
+            if (!this.firstNameDictionary.ContainsKey(upperCaseFirstName))
+            {
+                this.firstNameDictionary.Add(upperCaseFirstName, new List<FileCabinetRecord>());
+            }
+
+            this.firstNameDictionary[upperCaseFirstName].Add(this.list[id - 1]);
         }
 
         public FileCabinetRecord[] FindByFirstName(string firstName)
@@ -138,16 +159,9 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(firstName));
             }
 
-            var records = new List<FileCabinetRecord>();
-            foreach (var record in this.list)
-            {
-                if (firstName.Equals(record.FirstName, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    records.Add(record);
-                }
-            }
+            var upperCaseFirstName = firstName.ToUpperInvariant();
 
-            return records.ToArray();
+            return this.firstNameDictionary.ContainsKey(upperCaseFirstName) ? this.firstNameDictionary[upperCaseFirstName].ToArray() : Array.Empty<FileCabinetRecord>();
         }
 
         public FileCabinetRecord[] FindByLastName(string lastName)
