@@ -277,10 +277,15 @@ namespace FileCabinetApp
                     currency = words[1][^2];
                     decimal.TryParse(words[1][1..^2], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
                 }
-                else
+                else if (char.IsDigit(words[1][^2]))
                 {
                     currency = words[1][1];
                     decimal.TryParse(words[1][2..^1], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
+                }
+                else
+                {
+                    amount = default;
+                    currency = default;
                 }
 
                 records = FileCabinetService.FindByBudget(amount, currency);
