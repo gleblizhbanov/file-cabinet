@@ -37,7 +37,7 @@ namespace FileCabinetApp
                 throw new ArgumentException("The date of birth is invalid.", nameof(dateOfBirth));
             }
 
-            if (sex is not Sex.Male or Sex.Female)
+            if (sex is not Sex.Male and not Sex.Female)
             {
                 throw new ArgumentException("The sex is invalid.", nameof(sex));
             }
@@ -52,7 +52,7 @@ namespace FileCabinetApp
                 throw new ArgumentException("The count of kids if negative.", nameof(kidsCount));
             }
 
-            if (currency is not '$' or '€' or '¥' or '£' or '₩' or '₿' or '₽')
+            if (currency is not '$' and not '€' and not '¥' and not '£' and not '₩' and not '₿' and not '₽')
             {
                 throw new ArgumentException("The currency symbol is invalid.", nameof(currency));
             }
@@ -128,6 +128,25 @@ namespace FileCabinetApp
             this.list[id - 1].KidsCount = kidsCount;
             this.list[id - 1].Budget = budget;
             this.list[id - 1].Currency = currency;
+        }
+
+        public FileCabinetRecord[] FindByFirstName(string firstName)
+        {
+            if (firstName is null)
+            {
+                throw new ArgumentNullException(nameof(firstName));
+            }
+
+            var records = new List<FileCabinetRecord>();
+            foreach (var record in this.list)
+            {
+                if (firstName.Equals(record.FirstName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    records.Add(record);
+                }
+            }
+
+            return records.ToArray();
         }
 
         public FileCabinetRecord[] GetRecords()

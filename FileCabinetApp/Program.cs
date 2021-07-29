@@ -18,6 +18,7 @@ namespace FileCabinetApp
             new ("create", Create),
             new ("edit", Edit),
             new ("list", List),
+            new ("find", Find),
             new ("exit", Exit),
         };
 
@@ -26,8 +27,9 @@ namespace FileCabinetApp
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "stat", "prints the record count", "The 'stat' command prints the record count." },
             new string[] { "create", "allows you to create a new record", "The 'create' command allows you to create a new record." },
-            new string[] { "edit", "allows you to edit an existing record", "The edit command allows you to edit an existing record." },
-            new string[] { "list", "prints the list of all records", "The 'stat' command prints the list of all records." },
+            new string[] { "edit", "allows you to edit an existing record", "The 'edit' command allows you to edit an existing record." },
+            new string[] { "list", "prints the list of all records", "The 'list' command prints the list of all records." },
+            new string[] { "find [PROPERTY]", "allows you to find all records with the given value of the property", "The 'find' command allows you to find all records with the given value of the property." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
         };
 
@@ -77,7 +79,7 @@ namespace FileCabinetApp
         {
             if (!string.IsNullOrEmpty(parameters))
             {
-                var index = Array.FindIndex(HelpMessages, 0, HelpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex], parameters, StringComparison.InvariantCultureIgnoreCase));
+                var index = Array.FindIndex(HelpMessages, 0, HelpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex].Split()[0], parameters.Split()[0], StringComparison.InvariantCultureIgnoreCase));
                 if (index >= 0)
                 {
                     Console.WriteLine(HelpMessages[index][Program.ExplanationHelpIndex]);
@@ -110,6 +112,7 @@ namespace FileCabinetApp
         {
             var recordsCount = Program.FileCabinetService.GetStat();
             Console.WriteLine($"{recordsCount} record(s).");
+            Console.WriteLine();
         }
 
         private static void Create(string parameters)
@@ -156,9 +159,10 @@ namespace FileCabinetApp
                 }
                 catch (ArgumentException exception)
                 {
-                    Console.WriteLine(exception.Message);
-                    Console.WriteLine("Please try again.");
+                    Console.WriteLine(exception.Message + " Please try again.");
                 }
+
+                Console.WriteLine();
             }
             while (!isValid);
         }
@@ -168,12 +172,14 @@ namespace FileCabinetApp
             if (!int.TryParse(parameters, NumberStyles.None, CultureInfo.InvariantCulture, out var id))
             {
                 Console.WriteLine("Invalid id.");
+                Console.WriteLine();
                 return;
             }
 
             if (FileCabinetService.GetStat() < id)
             {
                 Console.WriteLine($"#{id} record is not found.");
+                Console.WriteLine();
                 return;
             }
 
@@ -219,11 +225,37 @@ namespace FileCabinetApp
                 }
                 catch (ArgumentException exception)
                 {
-                    Console.WriteLine(exception.Message);
-                    Console.WriteLine("Please try again.");
+                    Console.WriteLine(exception.Message + " Please try again.");
                 }
+
+                Console.WriteLine();
             }
             while (!isValid);
+        }
+
+        private static void Find(string parameters)
+        {
+            var words = parameters.Split(' ', 2);
+
+            if (words.Length < 2 || !words[1].StartsWith('\"') || !words[1].EndsWith('\"'))
+            {
+                Console.WriteLine("Invalid text to find. It must be in double quotes.");
+                Console.WriteLine();
+                return;
+            }
+
+            FileCabinetRecord[] records = Array.Empty<FileCabinetRecord>();
+            if (words[0].Equals("firstname", StringComparison.InvariantCultureIgnoreCase))
+            {
+                records = FileCabinetService.FindByFirstName(words[1][1..^1]);
+            }
+
+            foreach (var record in records)
+            {
+                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, {record.Sex}, has {record.KidsCount} kids, budget : {record.Currency}{record.Budget}");
+            }
+
+            Console.WriteLine();
         }
 
         private static void List(string parameters)
@@ -233,6 +265,8 @@ namespace FileCabinetApp
             {
                 Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, {record.Sex}, has {record.KidsCount} kids, budget : {record.Currency}{record.Budget}");
             }
+
+            Console.WriteLine();
         }
     }
 }
