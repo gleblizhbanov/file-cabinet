@@ -140,12 +140,12 @@ namespace FileCabinetApp
                 if (char.IsDigit(budget[0]))
                 {
                     currency = budget[^1];
-                    amount = decimal.Parse(budget[..^1], NumberStyles.Currency, CultureInfo.InvariantCulture);
+                    decimal.TryParse(budget[..^1], NumberStyles.Currency, CultureInfo.InvariantCulture, out amount);
                 }
                 else
                 {
                     currency = budget[0];
-                    amount = decimal.Parse(budget[1..], NumberStyles.Currency, CultureInfo.InvariantCulture);
+                    decimal.TryParse(budget[1..], NumberStyles.Currency, CultureInfo.InvariantCulture, out amount);
                 }
 
                 Console.Write("Kids count: ");
@@ -159,7 +159,7 @@ namespace FileCabinetApp
                 }
                 catch (ArgumentException exception)
                 {
-                    Console.WriteLine(exception.Message + " Please try again.");
+                    Console.WriteLine(exception.Message.Split('.')[0] + '.');
                 }
 
                 Console.WriteLine();
@@ -206,12 +206,12 @@ namespace FileCabinetApp
                 if (char.IsDigit(budget[0]))
                 {
                     currency = budget[^1];
-                    amount = decimal.Parse(budget[..^1], NumberStyles.Currency, CultureInfo.InvariantCulture);
+                    decimal.TryParse(budget[..^1], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
                 }
                 else
                 {
                     currency = budget[0];
-                    amount = decimal.Parse(budget[1..], NumberStyles.Currency, CultureInfo.InvariantCulture);
+                    decimal.TryParse(budget[1..], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
                 }
 
                 Console.Write("Kids count: ");
@@ -225,7 +225,7 @@ namespace FileCabinetApp
                 }
                 catch (ArgumentException exception)
                 {
-                    Console.WriteLine(exception.Message + " Please try again.");
+                    Console.WriteLine(exception.Message.Split('.')[0] + '.');
                 }
 
                 Console.WriteLine();
@@ -249,10 +249,21 @@ namespace FileCabinetApp
             {
                 records = FileCabinetService.FindByFirstName(words[1][1..^1]);
             }
-
-            foreach (var record in records)
+            else if (words[0].Equals("lastname", StringComparison.InvariantCultureIgnoreCase))
             {
-                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, {record.Sex}, has {record.KidsCount} kids, budget : {record.Currency}{record.Budget}");
+                records = FileCabinetService.FindByLastName(words[1][1..^1]);
+            }
+
+            if (records.Length == 0)
+            {
+                Console.WriteLine($"There is no record with such value of the {words[0].ToUpperInvariant()} property.");
+            }
+            else
+            {
+                foreach (var record in records)
+                {
+                    Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, {record.Sex}, has {record.KidsCount} kids, budget : {record.Currency}{record.Budget}");
+                }
             }
 
             Console.WriteLine();
@@ -261,9 +272,17 @@ namespace FileCabinetApp
         private static void List(string parameters)
         {
             var records = FileCabinetService.GetRecords();
-            foreach (var record in records)
+
+            if (records.Length == 0)
             {
-                Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, {record.Sex}, has {record.KidsCount} kids, budget : {record.Currency}{record.Budget}");
+                Console.WriteLine("There is no records.");
+            }
+            else
+            {
+                foreach (var record in records)
+                {
+                    Console.WriteLine($"#{record.Id}, {record.FirstName}, {record.LastName}, {record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, {record.Sex}, has {record.KidsCount} kids, budget : {record.Currency}{record.Budget}");
+                }
             }
 
             Console.WriteLine();

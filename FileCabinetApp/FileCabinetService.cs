@@ -116,7 +116,7 @@ namespace FileCabinetApp
                 throw new ArgumentException("The count of kids if negative.", nameof(kidsCount));
             }
 
-            if (currency is not '$' or '€' or '¥' or '£' or '₩' or '₿' or '₽')
+            if (currency is not '$' and not '€' and not '¥' and not '£' and not '₩' and not '₿' and not '₽')
             {
                 throw new ArgumentException("The currency symbol is invalid.", nameof(currency));
             }
@@ -141,6 +141,25 @@ namespace FileCabinetApp
             foreach (var record in this.list)
             {
                 if (firstName.Equals(record.FirstName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    records.Add(record);
+                }
+            }
+
+            return records.ToArray();
+        }
+
+        public FileCabinetRecord[] FindByLastName(string lastName)
+        {
+            if (lastName is null)
+            {
+                throw new ArgumentNullException(nameof(lastName));
+            }
+
+            var records = new List<FileCabinetRecord>();
+            foreach (var record in this.list)
+            {
+                if (lastName.Equals(record.LastName, StringComparison.InvariantCultureIgnoreCase))
                 {
                     records.Add(record);
                 }
