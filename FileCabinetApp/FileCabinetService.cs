@@ -26,11 +26,6 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="record">A oldRecord to add to the list.</param>
         /// <exception cref="ArgumentNullException">Thrown when person's first or last name is null, empty or consists only of white-space characters.</exception>
-        /// <exception cref="ArgumentException">Thrown when the length of person's first or last name is less than 2 or greater than 60.</exception>
-        /// <exception cref="ArgumentException">Thrown when person's date of birth is before 1950-Jan-01 or after the current date.</exception>
-        /// <exception cref="ArgumentException">Thrown when person's sex value is not <see cref="Sex.Male"/> or <see cref="Sex.Female"/>.</exception>
-        /// <exception cref="ArgumentException">Thrown when person's kids count or person's amount of money is negative.</exception>
-        /// <exception cref="ArgumentException">Thrown when the currency symbol is not valid.</exception>
         /// <returns>The ID of the oldRecord.</returns>
         public int CreateRecord(FileCabinetRecord record)
         {
@@ -57,12 +52,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="id">The ID of the oldRecord to edit.</param>
         /// <param name="newRecord">A oldRecord to replace old one with.</param>
-        /// <exception cref="ArgumentNullException">Thrown when first or last name is null, empty or consists only of white-space characters.</exception>
-        /// <exception cref="ArgumentException">Thrown when the length of first or last name is less than 2 or greater than 60.</exception>
-        /// <exception cref="ArgumentException">Thrown when date of birth is before 1950-Jan-01 or after the current date.</exception>
-        /// <exception cref="ArgumentException">Thrown when sex value is not <see cref="Sex.Male"/> or <see cref="Sex.Female"/>.</exception>
-        /// <exception cref="ArgumentException">Thrown when kidsCount or amount of money"/> is negative.</exception>
-        /// <exception cref="ArgumentException">Thrown when currency is not a valid currency symbol.</exception>
+        /// <exception cref="ArgumentNullException">Thrown when new record is null.</exception>
         public void EditRecord(int id, FileCabinetRecord newRecord)
         {
             if (newRecord is null)

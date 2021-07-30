@@ -4,6 +4,24 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetApp.FileCabinetCustomService">
+            <summary>
+            File cabinet service with custom validation.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetCustomService.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Validates input parameters.
+            </summary>
+            <param name="record">Record parameter to validate.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the record is null.</exception>
+            <exception cref="T:System.ArgumentNullException">Thrown when the first or the last </exception>
+            <exception cref="T:System.ArgumentException">Thrown when the length of person's first or last name is less than 2 or greater than 60.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when person's date of birth is before 1950-Jan-01 or after the current date.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when person's sex value is not <see cref="F:FileCabinetApp.Sex.Male"/> or <see cref="F:FileCabinetApp.Sex.Female"/>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when person's kids count or person's amount of money is negative.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when the currency symbol is not valid.</exception>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetDefaultService">
             <summary>
             File cabinet service with default validation.
@@ -14,6 +32,11 @@
             Validates input parameters.
             </summary>
             <param name="record">Record parameter to validate.</param>
+            <exception cref="T:System.ArgumentException">Thrown when the length of person's first or last name is less than 2 or greater than 60.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when person's date of birth is before 1950-Jan-01 or after the current date.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when person's sex value is not <see cref="F:FileCabinetApp.Sex.Male"/> or <see cref="F:FileCabinetApp.Sex.Female"/>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when person's kids count or person's amount of money is negative.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when the currency symbol is not valid.</exception>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -79,11 +102,6 @@
             </summary>
             <param name="record">A oldRecord to add to the list.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when person's first or last name is null, empty or consists only of white-space characters.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when the length of person's first or last name is less than 2 or greater than 60.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when person's date of birth is before 1950-Jan-01 or after the current date.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when person's sex value is not <see cref="F:FileCabinetApp.Sex.Male"/> or <see cref="F:FileCabinetApp.Sex.Female"/>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when person's kids count or person's amount of money is negative.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when the currency symbol is not valid.</exception>
             <returns>The ID of the oldRecord.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,FileCabinetApp.FileCabinetRecord)">
