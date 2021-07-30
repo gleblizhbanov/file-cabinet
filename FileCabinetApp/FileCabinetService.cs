@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace FileCabinetApp
 {
-    public class FileCabinetService
+    /// <summary>
+    /// This class provides methods to manipulate records.
+    /// </summary>
+    public abstract class FileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new ();
 
@@ -18,230 +21,72 @@ namespace FileCabinetApp
         private readonly Dictionary<short, List<FileCabinetRecord>> kidsCountDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> budgetDictionary = new ();
 
-        public int CreateRecord(string firstName, string lastName, DateTime dateOfBirth, Sex sex, short kidsCount, decimal amountOfMoney, char currency)
+        /// <summary>
+        /// Creates new oldRecord and return its ID.
+        /// </summary>
+        /// <param name="record">A oldRecord to add to the list.</param>
+        /// <exception cref="ArgumentNullException">Thrown when person's first or last name is null, empty or consists only of white-space characters.</exception>
+        /// <exception cref="ArgumentException">Thrown when the length of person's first or last name is less than 2 or greater than 60.</exception>
+        /// <exception cref="ArgumentException">Thrown when person's date of birth is before 1950-Jan-01 or after the current date.</exception>
+        /// <exception cref="ArgumentException">Thrown when person's sex value is not <see cref="Sex.Male"/> or <see cref="Sex.Female"/>.</exception>
+        /// <exception cref="ArgumentException">Thrown when person's kids count or person's amount of money is negative.</exception>
+        /// <exception cref="ArgumentException">Thrown when the currency symbol is not valid.</exception>
+        /// <returns>The ID of the oldRecord.</returns>
+        public int CreateRecord(FileCabinetRecord record)
         {
-            if (string.IsNullOrWhiteSpace(firstName))
+            if (record is null)
             {
-                throw new ArgumentNullException(nameof(firstName));
+                throw new ArgumentNullException(nameof(record), string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsNullMessage, "record"));
             }
 
-            if (firstName.Length is < 2 or > 60)
-            {
-                throw new ArgumentException("The length of the first name is invalid.", nameof(firstName));
-            }
-
-            if (string.IsNullOrWhiteSpace(lastName))
-            {
-                throw new ArgumentNullException(nameof(lastName));
-            }
-
-            if (lastName.Length is < 2 or > 60)
-            {
-                throw new ArgumentException("The length of the last name is invalid.", nameof(lastName));
-            }
-
-            if (dateOfBirth < new DateTime(1950, 1, 1) || dateOfBirth > DateTime.Now)
-            {
-                throw new ArgumentException("The date of birth is invalid.", nameof(dateOfBirth));
-            }
-
-            if (sex is not Sex.Male and not Sex.Female)
-            {
-                throw new ArgumentException("The sex is invalid.", nameof(sex));
-            }
-
-            if (amountOfMoney < 0)
-            {
-                throw new ArgumentException("The amount of money is negative.", nameof(amountOfMoney));
-            }
-
-            if (kidsCount < 0)
-            {
-                throw new ArgumentException("The count of kids if negative.", nameof(kidsCount));
-            }
-
-            if (currency is not '$' and not '€' and not '¥' and not '£' and not '₩' and not '₿' and not '₽')
-            {
-                throw new ArgumentException("The currency symbol is invalid.", nameof(currency));
-            }
-
-            var record = new FileCabinetRecord
-            {
-                Id = this.list.Count + 1,
-                FirstName = firstName,
-                LastName = lastName,
-                DateOfBirth = dateOfBirth,
-                Sex = sex,
-                KidsCount = kidsCount,
-                Budget = amountOfMoney,
-                Currency = currency,
-            };
-
+            this.ValidateParameters(record);
             this.list.Add(record);
 
-            var upperCaseFirstName = firstName.ToUpperInvariant();
-            if (!this.firstNameDictionary.ContainsKey(upperCaseFirstName))
-            {
-                this.firstNameDictionary.Add(upperCaseFirstName, new List<FileCabinetRecord>());
-            }
-
-            this.firstNameDictionary[upperCaseFirstName].Add(record);
-
-            var upperCaseLastName = lastName.ToUpperInvariant();
-            if (!this.lastNameDictionary.ContainsKey(upperCaseLastName))
-            {
-                this.lastNameDictionary.Add(upperCaseLastName, new List<FileCabinetRecord>());
-            }
-
-            this.lastNameDictionary[upperCaseLastName].Add(record);
-
-            if (!this.dateOfBirthDictionary.ContainsKey(dateOfBirth))
-            {
-                this.dateOfBirthDictionary.Add(dateOfBirth, new List<FileCabinetRecord>());
-            }
-
-            this.dateOfBirthDictionary[dateOfBirth].Add(record);
-
-            if (!this.sexDictionary.ContainsKey(sex))
-            {
-                this.sexDictionary.Add(sex, new List<FileCabinetRecord>());
-            }
-
-            this.sexDictionary[sex].Add(record);
-
-            if (!this.kidsCountDictionary.ContainsKey(kidsCount))
-            {
-                this.kidsCountDictionary.Add(kidsCount, new List<FileCabinetRecord>());
-            }
-
-            this.kidsCountDictionary[kidsCount].Add(record);
-
-            string budget = currency.ToString() + amountOfMoney;
-            if (!this.budgetDictionary.ContainsKey(budget))
-            {
-                this.budgetDictionary.Add(budget, new List<FileCabinetRecord>());
-            }
-
-            this.budgetDictionary[budget].Add(record);
+            AddRecordToTheDictionary(this.firstNameDictionary, key: record.FirstName.ToUpperInvariant(), record);
+            AddRecordToTheDictionary(this.lastNameDictionary, key: record.LastName.ToUpperInvariant(), record);
+            AddRecordToTheDictionary(this.dateOfBirthDictionary, key: record.DateOfBirth, record);
+            AddRecordToTheDictionary(this.sexDictionary, key: record.Sex, record);
+            AddRecordToTheDictionary(this.kidsCountDictionary, key: record.KidsCount, record);
+            AddRecordToTheDictionary(this.budgetDictionary, key: record.Currency.ToString() + record.Budget, record);
 
             return record.Id;
         }
 
-        public void EditRecord(int id, string firstName, string lastName, DateTime dateOfBirth, Sex sex, short kidsCount, decimal amountOfMoney, char currency)
+        /// <summary>
+        /// Allows user to edit the data of the oldRecord with <paramref name="id"/> ID.
+        /// </summary>
+        /// <param name="id">The ID of the oldRecord to edit.</param>
+        /// <param name="newRecord">A oldRecord to replace old one with.</param>
+        /// <exception cref="ArgumentNullException">Thrown when first or last name is null, empty or consists only of white-space characters.</exception>
+        /// <exception cref="ArgumentException">Thrown when the length of first or last name is less than 2 or greater than 60.</exception>
+        /// <exception cref="ArgumentException">Thrown when date of birth is before 1950-Jan-01 or after the current date.</exception>
+        /// <exception cref="ArgumentException">Thrown when sex value is not <see cref="Sex.Male"/> or <see cref="Sex.Female"/>.</exception>
+        /// <exception cref="ArgumentException">Thrown when kidsCount or amount of money"/> is negative.</exception>
+        /// <exception cref="ArgumentException">Thrown when currency is not a valid currency symbol.</exception>
+        public void EditRecord(int id, FileCabinetRecord newRecord)
         {
-            if (string.IsNullOrWhiteSpace(firstName))
+            if (newRecord is null)
             {
-                throw new ArgumentNullException(nameof(firstName));
+                throw new ArgumentNullException(nameof(newRecord), string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsNullMessage, "record"));
             }
 
-            if (firstName.Length is < 2 or > 60)
-            {
-                throw new ArgumentException("The length of the first name is invalid.", nameof(firstName));
-            }
+            this.ValidateParameters(newRecord);
 
-            if (string.IsNullOrWhiteSpace(lastName))
-            {
-                throw new ArgumentNullException(nameof(lastName));
-            }
+            var record = this.list[id - 1];
 
-            if (lastName.Length is < 2 or > 60)
-            {
-                throw new ArgumentException("The length of the last name is invalid.", nameof(lastName));
-            }
-
-            if (dateOfBirth < new DateTime(1950, 1, 1) || dateOfBirth > DateTime.Now)
-            {
-                throw new ArgumentException("The date of birth is invalid.", nameof(dateOfBirth));
-            }
-
-            if (sex is not Sex.Male or Sex.Female)
-            {
-                throw new ArgumentException("The sex is invalid.", nameof(sex));
-            }
-
-            if (amountOfMoney < 0)
-            {
-                throw new ArgumentException("The budget is negative.", nameof(amountOfMoney));
-            }
-
-            if (kidsCount < 0)
-            {
-                throw new ArgumentException("The count of kids if negative.", nameof(kidsCount));
-            }
-
-            if (currency is not '$' and not '€' and not '¥' and not '£' and not '₩' and not '₿' and not '₽')
-            {
-                throw new ArgumentException("The currency symbol is invalid.", nameof(currency));
-            }
-
-            var upperCaseOldFirstName = this.list[id - 1].FirstName.ToUpperInvariant();
-            this.firstNameDictionary[upperCaseOldFirstName].Remove(this.list[id - 1]);
-            this.list[id - 1].FirstName = firstName;
-
-            var upperCaseOldLastName = this.list[id - 1].LastName.ToUpperInvariant();
-            this.lastNameDictionary[upperCaseOldLastName].Remove(this.list[id - 1]);
-            this.list[id - 1].LastName = lastName;
-
-            this.dateOfBirthDictionary[dateOfBirth].Remove(this.list[id - 1]);
-            this.list[id - 1].DateOfBirth = dateOfBirth;
-
-            this.sexDictionary[sex].Remove(this.list[id - 1]);
-            this.list[id - 1].Sex = sex;
-
-            this.kidsCountDictionary[kidsCount].Remove(this.list[id - 1]);
-            this.list[id - 1].KidsCount = kidsCount;
-
-            var oldBudget = this.list[id - 1].Currency.ToString() + this.list[id - 1].Budget;
-            this.budgetDictionary[oldBudget].Remove(this.list[id - 1]);
-            this.list[id - 1].Budget = amountOfMoney;
-            this.list[id - 1].Currency = currency;
-
-            var upperCaseFirstName = firstName.ToUpperInvariant();
-
-            if (!this.firstNameDictionary.ContainsKey(upperCaseFirstName))
-            {
-                this.firstNameDictionary.Add(upperCaseFirstName, new List<FileCabinetRecord>());
-            }
-
-            this.firstNameDictionary[upperCaseFirstName].Add(this.list[id - 1]);
-
-            var upperCaseLastName = lastName.ToUpperInvariant();
-
-            if (!this.lastNameDictionary.ContainsKey(upperCaseLastName))
-            {
-                this.lastNameDictionary.Add(upperCaseLastName, new List<FileCabinetRecord>());
-            }
-
-            this.lastNameDictionary[upperCaseLastName].Add(this.list[id - 1]);
-
-            if (!this.dateOfBirthDictionary.ContainsKey(dateOfBirth))
-            {
-                this.dateOfBirthDictionary.Add(dateOfBirth, new List<FileCabinetRecord>());
-            }
-
-            this.dateOfBirthDictionary[dateOfBirth].Add(this.list[id - 1]);
-
-            if (!this.sexDictionary.ContainsKey(sex))
-            {
-                this.sexDictionary.Add(sex, new List<FileCabinetRecord>());
-            }
-
-            this.sexDictionary[sex].Add(this.list[id - 1]);
-
-            if (!this.kidsCountDictionary.ContainsKey(kidsCount))
-            {
-                this.kidsCountDictionary.Add(kidsCount, new List<FileCabinetRecord>());
-            }
-
-            this.kidsCountDictionary[kidsCount].Add(this.list[id - 1]);
-
-            var budget = currency.ToString() + amountOfMoney;
-            if (!this.budgetDictionary.ContainsKey(budget))
-            {
-                this.budgetDictionary[budget].Add(this.list[id - 1]);
-            }
+            this.EditFirstName(record, newRecord);
+            this.EditLastName(record, newRecord);
+            this.EditDateOfBirth(record, newRecord);
+            this.EditSex(record, newRecord);
+            this.EditKidsCount(record, newRecord);
+            this.EditBudget(record, newRecord);
         }
 
+        /// <summary>
+        /// Searches for the records with the first name value equal to <paramref name="firstName"/>.
+        /// </summary>
+        /// <param name="firstName">The first name of the person.</param>
+        /// <returns>The array of records if they're found or an empty array if not.</returns>
         public FileCabinetRecord[] FindByFirstName(string firstName)
         {
             if (firstName is null)
@@ -250,10 +95,14 @@ namespace FileCabinetApp
             }
 
             var upperCaseFirstName = firstName.ToUpperInvariant();
-
             return this.firstNameDictionary.ContainsKey(upperCaseFirstName) ? this.firstNameDictionary[upperCaseFirstName].ToArray() : Array.Empty<FileCabinetRecord>();
         }
 
+        /// <summary>
+        /// Searches for the records with the last name value equal to <paramref name="lastName"/>.
+        /// </summary>
+        /// <param name="lastName">The last name of the person.</param>
+        /// <returns>The array of records if they're found or an empty array if not.</returns>
         public FileCabinetRecord[] FindByLastName(string lastName)
         {
             if (lastName is null)
@@ -262,39 +111,156 @@ namespace FileCabinetApp
             }
 
             var upperCaseLastName = lastName.ToUpperInvariant();
-
             return this.lastNameDictionary.ContainsKey(upperCaseLastName) ? this.lastNameDictionary[upperCaseLastName].ToArray() : Array.Empty<FileCabinetRecord>();
         }
 
+        /// <summary>
+        /// Searches for the records with the date of birth value equal to <paramref name="dateOfBirth"/>.
+        /// </summary>
+        /// <param name="dateOfBirth">The date of birth of the person.</param>
+        /// <returns>The array of records if they're found or an empty array if not.</returns>
         public FileCabinetRecord[] FindByDateOfBirth(DateTime dateOfBirth)
         {
             return this.dateOfBirthDictionary.ContainsKey(dateOfBirth) ? this.dateOfBirthDictionary[dateOfBirth].ToArray() : Array.Empty<FileCabinetRecord>();
         }
 
+        /// <summary>
+        /// Searches for the records with the sex value equal to <paramref name="sex"/>.
+        /// </summary>
+        /// <param name="sex">The sex of the person.</param>
+        /// <returns>The array of records if they're found or an empty array if not.</returns>
         public FileCabinetRecord[] FindBySex(Sex sex)
         {
             return this.sexDictionary.ContainsKey(sex) ? this.sexDictionary[sex].ToArray() : Array.Empty<FileCabinetRecord>();
         }
 
+        /// <summary>
+        /// Searches for the records with the number of kids equal to <paramref name="kidsCount"/>.
+        /// </summary>
+        /// <param name="kidsCount">The number of kids the person has.</param>
+        /// <returns>The array of records if they're found or an empty array if not.</returns>
         public FileCabinetRecord[] FindByKidsCount(short kidsCount)
         {
             return this.kidsCountDictionary.ContainsKey(kidsCount) ? this.kidsCountDictionary[kidsCount].ToArray() : Array.Empty<FileCabinetRecord>();
         }
 
+        /// <summary>
+        /// Searches for the records with the budget equal to <paramref name="amount"/> of <paramref name="currency"/>.
+        /// </summary>
+        /// <param name="amount">The amount of money the person has.</param>
+        /// <param name="currency">The currency symbol of person's savings.</param>
+        /// <returns>The array of records if they're found or an empty array if not.</returns>
         public FileCabinetRecord[] FindByBudget(decimal amount, char currency)
         {
             var budget = currency.ToString() + amount;
             return this.budgetDictionary.ContainsKey(budget) ? this.budgetDictionary[budget].ToArray() : Array.Empty<FileCabinetRecord>();
         }
 
+        /// <summary>
+        /// Obtains the list of all records.
+        /// </summary>
+        /// <returns>The array of records.</returns>
         public FileCabinetRecord[] GetRecords()
         {
             return this.list.ToArray();
         }
 
+        /// <summary>
+        /// Counts the number of records.
+        /// </summary>
+        /// <returns>The number of records.</returns>
         public int GetStat()
         {
             return this.list.Count;
+        }
+
+        /// <summary>
+        /// Validates input parameters.
+        /// </summary>
+        /// <param name="record">Record parameter to validate.</param>
+        protected abstract void ValidateParameters(FileCabinetRecord record);
+
+        private static void AddRecordToTheDictionary<T>(Dictionary<T, List<FileCabinetRecord>> dictionary, T key, FileCabinetRecord record)
+        {
+            if (!dictionary.ContainsKey(key))
+            {
+                dictionary.Add(key, new List<FileCabinetRecord>());
+            }
+
+            dictionary[key].Add(record);
+        }
+
+        private void EditFirstName(FileCabinetRecord record, FileCabinetRecord newRecord)
+        {
+            if (newRecord.FirstName != record.FirstName)
+            {
+                if (!newRecord.FirstName.Equals(record.FirstName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var upperCaseOldFirstName = record.FirstName.ToUpperInvariant();
+                    this.firstNameDictionary[upperCaseOldFirstName].Remove(record);
+                    AddRecordToTheDictionary(this.firstNameDictionary, key: newRecord.FirstName.ToUpperInvariant(), record);
+                }
+
+                record.FirstName = newRecord.FirstName;
+            }
+        }
+
+        private void EditLastName(FileCabinetRecord record, FileCabinetRecord newRecord)
+        {
+            if (newRecord.LastName != record.FirstName)
+            {
+                if (!newRecord.LastName.Equals(record.LastName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var upperCaseOldLastName = record.LastName.ToUpperInvariant();
+                    this.lastNameDictionary[upperCaseOldLastName].Remove(record);
+                    AddRecordToTheDictionary(this.lastNameDictionary, key: newRecord.LastName.ToUpperInvariant(), record);
+                }
+
+                record.LastName = newRecord.LastName;
+            }
+        }
+
+        private void EditDateOfBirth(FileCabinetRecord record, FileCabinetRecord newRecord)
+        {
+            if (newRecord.DateOfBirth != record.DateOfBirth)
+            {
+                this.dateOfBirthDictionary[newRecord.DateOfBirth].Remove(record);
+                record.DateOfBirth = newRecord.DateOfBirth;
+                AddRecordToTheDictionary(this.dateOfBirthDictionary, key: newRecord.DateOfBirth, record);
+            }
+        }
+
+        private void EditSex(FileCabinetRecord record, FileCabinetRecord newRecord)
+        {
+            if (newRecord.Sex != record.Sex)
+            {
+                this.sexDictionary[newRecord.Sex].Remove(record);
+                record.Sex = newRecord.Sex;
+                AddRecordToTheDictionary(this.sexDictionary, key: newRecord.Sex, record);
+            }
+        }
+
+        private void EditKidsCount(FileCabinetRecord record, FileCabinetRecord newRecord)
+        {
+            if (newRecord.KidsCount != record.KidsCount)
+            {
+                this.kidsCountDictionary[newRecord.KidsCount].Remove(record);
+                record.KidsCount = newRecord.KidsCount;
+                AddRecordToTheDictionary(this.kidsCountDictionary, key: newRecord.KidsCount, record);
+            }
+        }
+
+        private void EditBudget(FileCabinetRecord record, FileCabinetRecord newRecord)
+        {
+            if (newRecord.Currency != record.Currency || newRecord.Budget != record.Budget)
+            {
+                var oldBudget = record.Currency.ToString() + record.Budget;
+                var budget = newRecord.Currency.ToString() + newRecord.Budget;
+                this.budgetDictionary[oldBudget].Remove(record);
+                record.Budget = newRecord.Budget;
+                record.Currency = newRecord.Currency;
+                AddRecordToTheDictionary(this.budgetDictionary, key: budget, record);
+            }
         }
     }
 }
