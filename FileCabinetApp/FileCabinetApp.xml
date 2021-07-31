@@ -4,39 +4,59 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
-        <member name="T:FileCabinetApp.FileCabinetCustomService">
+        <member name="T:FileCabinetApp.CustomValidator">
             <summary>
-            File cabinet service with custom validation.
+            Used to validate parameters using custom rules.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetCustomService.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
+        <member name="M:FileCabinetApp.CustomValidator.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
             <summary>
             Validates input parameters.
             </summary>
             <param name="record">Record parameter to validate.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when the record is null.</exception>
-            <exception cref="T:System.ArgumentNullException">Thrown when the first or the last </exception>
+            <exception cref="T:System.ArgumentNullException">Thrown when the first or the last.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when the length of person's first or last name is less than 2 or greater than 20.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when person's date of birth is 120+ years before current date or after the current date.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when person's sex value is not <see cref="F:FileCabinetApp.Sex.Male"/> or <see cref="F:FileCabinetApp.Sex.Female"/>.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when person's kids count or person's amount of money is negative.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when the currency symbol is not valid.</exception>
+        </member>
+        <member name="T:FileCabinetApp.DefaultValidator">
+            <summary>
+            Used to validate parameters using default rules.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Validates input parameters.
+            </summary>
+            <param name="record">Record parameter to validate.</param>
             <exception cref="T:System.ArgumentException">Thrown when the length of person's first or last name is less than 2 or greater than 60.</exception>
             <exception cref="T:System.ArgumentException">Thrown when person's date of birth is before 1950-Jan-01 or after the current date.</exception>
             <exception cref="T:System.ArgumentException">Thrown when person's sex value is not <see cref="F:FileCabinetApp.Sex.Male"/> or <see cref="F:FileCabinetApp.Sex.Female"/>.</exception>
             <exception cref="T:System.ArgumentException">Thrown when person's kids count or person's amount of money is negative.</exception>
             <exception cref="T:System.ArgumentException">Thrown when the currency symbol is not valid.</exception>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetCustomService">
+            <summary>
+            File cabinet service with custom validation.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetCustomService.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetCustomService"/> class.
+            </summary>
         </member>
         <member name="T:FileCabinetApp.FileCabinetDefaultService">
             <summary>
             File cabinet service with default validation.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetDefaultService.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
+        <member name="M:FileCabinetApp.FileCabinetDefaultService.#ctor">
             <summary>
-            Validates input parameters.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetDefaultService"/> class.
             </summary>
-            <param name="record">Record parameter to validate.</param>
-            <exception cref="T:System.ArgumentException">Thrown when the length of person's first or last name is less than 2 or greater than 60.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when person's date of birth is before 1950-Jan-01 or after the current date.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when person's sex value is not <see cref="F:FileCabinetApp.Sex.Male"/> or <see cref="F:FileCabinetApp.Sex.Female"/>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when person's kids count or person's amount of money is negative.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when the currency symbol is not valid.</exception>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -96,6 +116,12 @@
             This class provides methods to manipulate records.
             </summary>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetService.#ctor(FileCabinetApp.IRecordValidator)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService"/> class.
+            </summary>
+            <param name="validator">Validator object implementing <see cref="T:FileCabinetApp.IRecordValidator"/> interface.</param>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.FileCabinetRecord)">
             <summary>
             Creates new oldRecord and return its ID.
@@ -110,12 +136,7 @@
             </summary>
             <param name="id">The ID of the oldRecord to edit.</param>
             <param name="newRecord">A oldRecord to replace old one with.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown when first or last name is null, empty or consists only of white-space characters.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when the length of first or last name is less than 2 or greater than 60.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when date of birth is before 1950-Jan-01 or after the current date.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when sex value is not <see cref="F:FileCabinetApp.Sex.Male"/> or <see cref="F:FileCabinetApp.Sex.Female"/>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when kidsCount or amount of money"/> is negative.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when currency is not a valid currency symbol.</exception>
+            <exception cref="T:System.ArgumentNullException">Thrown when new record is null.</exception>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
             <summary>
@@ -172,9 +193,9 @@
             </summary>
             <returns>The number of records.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
             <summary>
-            Validates input parameters.
+            Validates incoming parameters.
             </summary>
             <param name="record">Record parameter to validate.</param>
         </member>
@@ -183,10 +204,11 @@
             Provides console file cabinet application.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.Program.Main">
+        <member name="M:FileCabinetApp.Program.Main(System.String[])">
             <summary>
             Application's entry point.
             </summary>
+            <param name="args">Command line arguments.</param>
         </member>
         <member name="T:FileCabinetApp.Resources">
             <summary>
@@ -214,9 +236,19 @@
               Looks up a localized string similar to Budget (with currency sign): .
             </summary>
         </member>
+        <member name="P:FileCabinetApp.Resources.CustomValidationRulesMessage">
+            <summary>
+              Looks up a localized string similar to Using custom validation rules..
+            </summary>
+        </member>
         <member name="P:FileCabinetApp.Resources.DateOfBirthEnteringRequest">
             <summary>
               Looks up a localized string similar to Date of birth: .
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.DefaultValidationRulesMessage">
+            <summary>
+              Looks up a localized string similar to Using default validation rules..
             </summary>
         </member>
         <member name="P:FileCabinetApp.Resources.ExitingMessage">

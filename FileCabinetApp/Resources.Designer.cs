@@ -79,11 +79,29 @@ namespace FileCabinetApp {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Using custom validation rules..
+        /// </summary>
+        internal static string CustomValidationRulesMessage {
+            get {
+                return ResourceManager.GetString("CustomValidationRulesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Date of birth: .
         /// </summary>
         internal static string DateOfBirthEnteringRequest {
             get {
                 return ResourceManager.GetString("DateOfBirthEnteringRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using default validation rules..
+        /// </summary>
+        internal static string DefaultValidationRulesMessage {
+            get {
+                return ResourceManager.GetString("DefaultValidationRulesMessage", resourceCulture);
             }
         }
         

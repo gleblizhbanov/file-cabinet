@@ -212,4 +212,10 @@
     <value>The {0} is negative.</value>
     <comment>{0} - Parameter name.</comment>
   </data>
+  <data name="CustomValidationRulesMessage" xml:space="preserve">
+    <value>Using custom validation rules.</value>
+  </data>
+  <data name="DefaultValidationRulesMessage" xml:space="preserve">
+    <value>Using default validation rules.</value>
+  </data>
 </root>

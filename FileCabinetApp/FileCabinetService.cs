@@ -14,12 +14,23 @@ namespace FileCabinetApp
     {
         private readonly List<FileCabinetRecord> list = new ();
 
+        private readonly IRecordValidator validator;
+
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new ();
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new ();
         private readonly Dictionary<Sex, List<FileCabinetRecord>> sexDictionary = new ();
         private readonly Dictionary<short, List<FileCabinetRecord>> kidsCountDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> budgetDictionary = new ();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
+        /// </summary>
+        /// <param name="validator">Validator object implementing <see cref="IRecordValidator"/> interface.</param>
+        protected FileCabinetService(IRecordValidator validator)
+        {
+            this.validator = validator;
+        }
 
         /// <summary>
         /// Creates new oldRecord and return its ID.
@@ -34,7 +45,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(record), string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsNullMessage, "record"));
             }
 
-            this.ValidateParameters(record);
+            this.validator.ValidateParameters(record);
             this.list.Add(record);
 
             AddRecordToTheDictionary(this.firstNameDictionary, key: record.FirstName.ToUpperInvariant(), record);
@@ -60,7 +71,7 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(newRecord), string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsNullMessage, "record"));
             }
 
-            this.ValidateParameters(newRecord);
+            this.validator.ValidateParameters(newRecord);
 
             var record = this.list[id - 1];
 
@@ -163,12 +174,6 @@ namespace FileCabinetApp
         {
             return this.list.Count;
         }
-
-        /// <summary>
-        /// Validates input parameters.
-        /// </summary>
-        /// <param name="record">Record parameter to validate.</param>
-        protected abstract void ValidateParameters(FileCabinetRecord record);
 
         private static void AddRecordToTheDictionary<T>(Dictionary<T, List<FileCabinetRecord>> dictionary, T key, FileCabinetRecord record)
         {

@@ -12,7 +12,6 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
-        private static readonly FileCabinetDefaultService FileCabinetService = new ();
         private static readonly Tuple<string, Action<string>>[] Commands =
         {
             new ("help", PrintHelp),
@@ -35,14 +34,33 @@ namespace FileCabinetApp
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
         };
 
+        private static FileCabinetService fileCabinetService;
         private static bool isRunning = true;
 
         /// <summary>
         /// Application's entry point.
         /// </summary>
-        public static void Main()
+        /// <param name="args">Command line arguments.</param>
+        public static void Main(string[] args)
         {
+            if (args is null)
+            {
+                throw new ArgumentNullException(nameof(args));
+            }
+
             Console.WriteLine(Resources.GreetingMessage, DeveloperName);
+            if ((args.Length >= 2 && args[0] == "-v" && args[1].Equals("Custom", StringComparison.InvariantCultureIgnoreCase)) || (args.Length != 0 &&
+                args[0].StartsWith("--validation-rules=", StringComparison.InvariantCulture) && args[0].EndsWith("--validation-rules=Custom", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                Console.WriteLine(Resources.CustomValidationRulesMessage);
+                fileCabinetService = new FileCabinetCustomService();
+            }
+            else
+            {
+                Console.WriteLine(Resources.DefaultValidationRulesMessage);
+                fileCabinetService = new FileCabinetDefaultService();
+            }
+
             Console.WriteLine(Resources.GetHelpHint);
             Console.WriteLine();
 
@@ -110,7 +128,7 @@ namespace FileCabinetApp
 
         private static void Stat(string parameters)
         {
-            var recordsCount = Program.FileCabinetService.GetStat();
+            var recordsCount = Program.fileCabinetService.GetStat();
             Console.WriteLine(Resources.RecordsCountMessage, recordsCount);
             Console.WriteLine();
         }
@@ -155,7 +173,7 @@ namespace FileCabinetApp
                 {
                     var record = new FileCabinetRecord()
                     {
-                        Id = FileCabinetService.GetStat() + 1,
+                        Id = fileCabinetService.GetStat() + 1,
                         FirstName = firstName,
                         LastName = lastName,
                         DateOfBirth = dateOfBirth,
@@ -165,7 +183,7 @@ namespace FileCabinetApp
                         Currency = currency,
                     };
 
-                    int id = FileCabinetService.CreateRecord(record);
+                    int id = fileCabinetService.CreateRecord(record);
                     isValid = true;
                     Console.WriteLine(Resources.RecordCreated, id);
                 }
@@ -188,7 +206,7 @@ namespace FileCabinetApp
                 return;
             }
 
-            if (FileCabinetService.GetStat() < id)
+            if (fileCabinetService.GetStat() < id)
             {
                 Console.WriteLine(Resources.RecordNotFound, id);
                 Console.WriteLine();
@@ -243,7 +261,7 @@ namespace FileCabinetApp
                         Currency = currency,
                     };
 
-                    FileCabinetService.EditRecord(id, record);
+                    fileCabinetService.EditRecord(id, record);
                     Console.WriteLine(Resources.RecordUpdated, id);
                     isValid = true;
                 }
@@ -272,26 +290,26 @@ namespace FileCabinetApp
             FileCabinetRecord[] records = Array.Empty<FileCabinetRecord>();
             if (words[0].Equals("FirstName", StringComparison.InvariantCultureIgnoreCase))
             {
-                records = FileCabinetService.FindByFirstName(words[1][1..^1]);
+                records = fileCabinetService.FindByFirstName(words[1][1..^1]);
             }
             else if (words[0].Equals("LastName", StringComparison.InvariantCultureIgnoreCase))
             {
-                records = FileCabinetService.FindByLastName(words[1][1..^1]);
+                records = fileCabinetService.FindByLastName(words[1][1..^1]);
             }
             else if (words[0].Equals("DateOfBirth", StringComparison.InvariantCultureIgnoreCase))
             {
                 DateTime.TryParse(words[1][1..^1], CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOfBirth);
-                records = FileCabinetService.FindByDateOfBirth(dateOfBirth);
+                records = fileCabinetService.FindByDateOfBirth(dateOfBirth);
             }
             else if (words[0].Equals("Sex", StringComparison.InvariantCultureIgnoreCase))
             {
                 Enum.TryParse<Sex>(words[1][1..^1], ignoreCase: true, out var sex);
-                records = FileCabinetService.FindBySex(sex);
+                records = fileCabinetService.FindBySex(sex);
             }
             else if (words[0].Equals("KidsCount", StringComparison.InvariantCultureIgnoreCase))
             {
                 short.TryParse(words[1][1..^1], NumberStyles.None, CultureInfo.InvariantCulture, out var kidsCount);
-                records = FileCabinetService.FindByKidsCount(kidsCount);
+                records = fileCabinetService.FindByKidsCount(kidsCount);
             }
             else if (words[0].Equals("Budget", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -313,7 +331,7 @@ namespace FileCabinetApp
                     currency = default;
                 }
 
-                records = FileCabinetService.FindByBudget(amount, currency);
+                records = fileCabinetService.FindByBudget(amount, currency);
             }
             else
             {
@@ -341,7 +359,7 @@ namespace FileCabinetApp
 
         private static void List(string parameters)
         {
-            var records = FileCabinetService.GetRecords();
+            var records = fileCabinetService.GetRecords();
 
             if (records.Length == 0)
             {
