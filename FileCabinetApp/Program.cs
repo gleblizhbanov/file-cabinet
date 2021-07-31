@@ -53,12 +53,12 @@ namespace FileCabinetApp
                 args[0].StartsWith("--validation-rules=", StringComparison.InvariantCulture) && args[0].EndsWith("--validation-rules=Custom", StringComparison.InvariantCultureIgnoreCase)))
             {
                 Console.WriteLine(Resources.CustomValidationRulesMessage);
-                fileCabinetService = new FileCabinetCustomService();
+                fileCabinetService = new FileCabinetService(new CustomValidator());
             }
             else
             {
                 Console.WriteLine(Resources.DefaultValidationRulesMessage);
-                fileCabinetService = new FileCabinetDefaultService();
+                fileCabinetService = new FileCabinetService(new DefaultValidator());
             }
 
             Console.WriteLine(Resources.GetHelpHint);

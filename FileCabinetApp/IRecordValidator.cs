@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// Interface for validator classes.
+    /// </summary>
     public interface IRecordValidator
     {
         /// <summary>
