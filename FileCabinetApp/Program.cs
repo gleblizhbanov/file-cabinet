@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Globalization;
 
 namespace FileCabinetApp
@@ -287,7 +288,7 @@ namespace FileCabinetApp
             }
 
             bool propertyIsValid = true;
-            FileCabinetRecord[] records = Array.Empty<FileCabinetRecord>();
+            ReadOnlyCollection<FileCabinetRecord> records = null;
             if (words[0].Equals("FirstName", StringComparison.InvariantCultureIgnoreCase))
             {
                 records = fileCabinetService.FindByFirstName(words[1][1..^1]);
@@ -342,7 +343,7 @@ namespace FileCabinetApp
             {
                 Console.WriteLine(Resources.InvalidPropertyMessage, words[0].ToUpperInvariant());
             }
-            else if (records.Length == 0)
+            else if (records is null || records.Count == 0)
             {
                 Console.WriteLine(Resources.PropertyValueNotFoundMessage, words[0].ToUpperInvariant());
             }
@@ -361,7 +362,7 @@ namespace FileCabinetApp
         {
             var records = fileCabinetService.GetRecords();
 
-            if (records.Length == 0)
+            if (records.Count == 0)
             {
                 Console.WriteLine(Resources.NoRecordsMessage);
             }

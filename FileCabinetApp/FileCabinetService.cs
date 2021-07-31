@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -88,7 +89,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">The first name of the person.</param>
         /// <returns>The array of records if they're found or an empty array if not.</returns>
-        public FileCabinetRecord[] FindByFirstName(string firstName)
+        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
             if (firstName is null)
             {
@@ -96,7 +97,8 @@ namespace FileCabinetApp
             }
 
             var upperCaseFirstName = firstName.ToUpperInvariant();
-            return this.firstNameDictionary.ContainsKey(upperCaseFirstName) ? this.firstNameDictionary[upperCaseFirstName].ToArray() : Array.Empty<FileCabinetRecord>();
+            return this.firstNameDictionary.ContainsKey(upperCaseFirstName)
+                ? this.firstNameDictionary[upperCaseFirstName].AsReadOnly() : null;
         }
 
         /// <summary>
@@ -104,7 +106,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">The last name of the person.</param>
         /// <returns>The array of records if they're found or an empty array if not.</returns>
-        public FileCabinetRecord[] FindByLastName(string lastName)
+        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
             if (lastName is null)
             {
@@ -112,7 +114,8 @@ namespace FileCabinetApp
             }
 
             var upperCaseLastName = lastName.ToUpperInvariant();
-            return this.lastNameDictionary.ContainsKey(upperCaseLastName) ? this.lastNameDictionary[upperCaseLastName].ToArray() : Array.Empty<FileCabinetRecord>();
+            return this.lastNameDictionary.ContainsKey(upperCaseLastName) ?
+                this.lastNameDictionary[upperCaseLastName].AsReadOnly() : null;
         }
 
         /// <summary>
@@ -120,9 +123,10 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="dateOfBirth">The date of birth of the person.</param>
         /// <returns>The array of records if they're found or an empty array if not.</returns>
-        public FileCabinetRecord[] FindByDateOfBirth(DateTime dateOfBirth)
+        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(DateTime dateOfBirth)
         {
-            return this.dateOfBirthDictionary.ContainsKey(dateOfBirth) ? this.dateOfBirthDictionary[dateOfBirth].ToArray() : Array.Empty<FileCabinetRecord>();
+            return this.dateOfBirthDictionary.ContainsKey(dateOfBirth) ?
+                this.dateOfBirthDictionary[dateOfBirth].AsReadOnly() : null;
         }
 
         /// <summary>
@@ -130,9 +134,10 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="sex">The sex of the person.</param>
         /// <returns>The array of records if they're found or an empty array if not.</returns>
-        public FileCabinetRecord[] FindBySex(Sex sex)
+        public ReadOnlyCollection<FileCabinetRecord> FindBySex(Sex sex)
         {
-            return this.sexDictionary.ContainsKey(sex) ? this.sexDictionary[sex].ToArray() : Array.Empty<FileCabinetRecord>();
+            return this.sexDictionary.ContainsKey(sex) ?
+                this.sexDictionary[sex].AsReadOnly() : null;
         }
 
         /// <summary>
@@ -140,9 +145,10 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="kidsCount">The number of kids the person has.</param>
         /// <returns>The array of records if they're found or an empty array if not.</returns>
-        public FileCabinetRecord[] FindByKidsCount(short kidsCount)
+        public ReadOnlyCollection<FileCabinetRecord> FindByKidsCount(short kidsCount)
         {
-            return this.kidsCountDictionary.ContainsKey(kidsCount) ? this.kidsCountDictionary[kidsCount].ToArray() : Array.Empty<FileCabinetRecord>();
+            return this.kidsCountDictionary.ContainsKey(kidsCount) ?
+                this.kidsCountDictionary[kidsCount].AsReadOnly() : null;
         }
 
         /// <summary>
@@ -151,19 +157,20 @@ namespace FileCabinetApp
         /// <param name="amount">The amount of money the person has.</param>
         /// <param name="currency">The currency symbol of person's savings.</param>
         /// <returns>The array of records if they're found or an empty array if not.</returns>
-        public FileCabinetRecord[] FindByBudget(decimal amount, char currency)
+        public ReadOnlyCollection<FileCabinetRecord> FindByBudget(decimal amount, char currency)
         {
             var budget = currency.ToString() + amount;
-            return this.budgetDictionary.ContainsKey(budget) ? this.budgetDictionary[budget].ToArray() : Array.Empty<FileCabinetRecord>();
+            return this.budgetDictionary.ContainsKey(budget) ?
+                this.budgetDictionary[budget].AsReadOnly() : null;
         }
 
         /// <summary>
         /// Obtains the list of all records.
         /// </summary>
         /// <returns>The array of records.</returns>
-        public FileCabinetRecord[] GetRecords()
+        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
-            return this.list.ToArray();
+            return this.list.AsReadOnly();
         }
 
         /// <summary>
