@@ -11,7 +11,7 @@ namespace FileCabinetApp
     /// <summary>
     /// This class provides methods to manipulate records.
     /// </summary>
-    public class FileCabinetService
+    public class FileCabinetService : IFileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new ();
 
@@ -34,11 +34,11 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Creates new oldRecord and return its ID.
+        /// Adds a new record to the list.
         /// </summary>
-        /// <param name="record">A oldRecord to add to the list.</param>
+        /// <param name="record">A record to add to the list.</param>
         /// <exception cref="ArgumentNullException">Thrown when person's first or last name is null, empty or consists only of white-space characters.</exception>
-        /// <returns>The ID of the oldRecord.</returns>
+        /// <returns>The ID of the record.</returns>
         public int CreateRecord(FileCabinetRecord record)
         {
             if (record is null)
@@ -60,10 +60,10 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Allows user to edit the data of the oldRecord with <paramref name="id"/> ID.
+        /// Allows user to edit the data of the record with <paramref name="id"/> ID.
         /// </summary>
-        /// <param name="id">The ID of the oldRecord to edit.</param>
-        /// <param name="newRecord">A oldRecord to replace old one with.</param>
+        /// <param name="id">The ID of the record to edit.</param>
+        /// <param name="newRecord">A record to replace old one with.</param>
         /// <exception cref="ArgumentNullException">Thrown when new record is null.</exception>
         public void EditRecord(int id, FileCabinetRecord newRecord)
         {
@@ -89,6 +89,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="firstName">The first name of the person.</param>
         /// <returns>The array of records if they're found or an empty array if not.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the first name if null.</exception>>
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
             if (firstName is null)
@@ -106,6 +107,7 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="lastName">The last name of the person.</param>
         /// <returns>The array of records if they're found or an empty array if not.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the last name if null.</exception>>
         public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
             if (lastName is null)

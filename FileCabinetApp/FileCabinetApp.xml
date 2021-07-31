@@ -104,18 +104,18 @@
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.FileCabinetRecord)">
             <summary>
-            Creates new oldRecord and return its ID.
+            Adds a new record to the list.
             </summary>
-            <param name="record">A oldRecord to add to the list.</param>
+            <param name="record">A record to add to the list.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when person's first or last name is null, empty or consists only of white-space characters.</exception>
-            <returns>The ID of the oldRecord.</returns>
+            <returns>The ID of the record.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,FileCabinetApp.FileCabinetRecord)">
             <summary>
-            Allows user to edit the data of the oldRecord with <paramref name="id"/> ID.
+            Allows user to edit the data of the record with <paramref name="id"/> ID.
             </summary>
-            <param name="id">The ID of the oldRecord to edit.</param>
-            <param name="newRecord">A oldRecord to replace old one with.</param>
+            <param name="id">The ID of the record to edit.</param>
+            <param name="newRecord">A record to replace old one with.</param>
             <exception cref="T:System.ArgumentNullException">Thrown when new record is null.</exception>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
@@ -124,6 +124,7 @@
             </summary>
             <param name="firstName">The first name of the person.</param>
             <returns>The array of records if they're found or an empty array if not.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when the first name if null.</exception>>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FindByLastName(System.String)">
             <summary>
@@ -131,6 +132,7 @@
             </summary>
             <param name="lastName">The last name of the person.</param>
             <returns>The array of records if they're found or an empty array if not.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when the last name if null.</exception>>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FindByDateOfBirth(System.DateTime)">
             <summary>
@@ -168,6 +170,80 @@
             <returns>The array of records.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.GetStat">
+            <summary>
+            Counts the number of records.
+            </summary>
+            <returns>The number of records.</returns>
+        </member>
+        <member name="T:FileCabinetApp.IFileCabinetService">
+            <summary>
+            An interface for FileCabinetService classes.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Adds a new record to the list.
+            </summary>
+            <param name="record">A record to add to the list.</param>
+            <returns>The ID of the record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Allows user to edit the data of the record with <paramref name="id"/> ID.
+            </summary>
+            <param name="id">The ID of the record to edit.</param>
+            <param name="newRecord">A record to replace old one with.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Searches for the records with the first name value equal to <paramref name="firstName"/>.
+            </summary>
+            <param name="firstName">The first name of the person.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByLastName(System.String)">
+            <summary>
+            Searches for the records with the last name value equal to <paramref name="lastName"/>.
+            </summary>
+            <param name="lastName">The last name of the person.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByDateOfBirth(System.DateTime)">
+            <summary>
+            Searches for the records with the date of birth value equal to <paramref name="dateOfBirth"/>.
+            </summary>
+            <param name="dateOfBirth">The date of birth of the person.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindBySex(FileCabinetApp.Sex)">
+            <summary>
+            Searches for the records with the sex value equal to <paramref name="sex"/>.
+            </summary>
+            <param name="sex">The sex of the person.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByKidsCount(System.Int16)">
+            <summary>
+            Searches for the records with the number of kids equal to <paramref name="kidsCount"/>.
+            </summary>
+            <param name="kidsCount">The number of kids the person has.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByBudget(System.Decimal,System.Char)">
+            <summary>
+            Searches for the records with the budget equal to <paramref name="amount"/> of <paramref name="currency"/>.
+            </summary>
+            <param name="amount">The amount of money the person has.</param>
+            <param name="currency">The currency symbol of person's savings.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetRecords">
+            <summary>
+            Obtains the list of all records.
+            </summary>
+            <returns>The array of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetStat">
             <summary>
             Counts the number of records.
             </summary>
