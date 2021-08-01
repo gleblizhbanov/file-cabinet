@@ -4,6 +4,527 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetApp.CustomValidator">
+            <summary>
+            Used to validate parameters using custom rules.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.ValidateName(System.String)">
+            <summary>
+            Validates name parameter.
+            </summary>
+            <param name="name">Name parameter to validate.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the name is null, empty or consists only of whitespace characters.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when the length of person's first or last name is less than 2 or greater than 60.</exception>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.ValidateDateOfBirth(System.DateTime)">
+            <summary>
+            Validates date of birth parameter.
+            </summary>
+            <param name="dateOfBirth">Date of birth to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.ValidateSex(FileCabinetApp.Sex)">
+            <summary>
+            Validates sex parameter.
+            </summary>
+            <param name="sex">Sex to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.ValidateCount(System.Int16)">
+            <summary>
+            Validates count parameter.
+            </summary>
+            <param name="count">Count to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.ValidateCount(System.Decimal)">
+            <summary>
+            Validates count parameter.
+            </summary>
+            <param name="count">Count to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.ValidateCurrency(System.Char)">
+            <summary>
+            Validates currency symbol parameter.
+            </summary>
+            <param name="currency">Currency symbol to validate.</param>
+        </member>
+        <member name="T:FileCabinetApp.DefaultValidator">
+            <summary>
+            Used to validate parameters using default rules.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateName(System.String)">
+            <summary>
+            Validates name parameter.
+            </summary>
+            <param name="name">Name parameter to validate.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the name is null, empty or consists only of whitespace characters.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when the length of person's first or last name is less than 2 or greater than 60.</exception>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateDateOfBirth(System.DateTime)">
+            <summary>
+            Validates date of birth parameter.
+            </summary>
+            <param name="dateOfBirth">Date of birth to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateSex(FileCabinetApp.Sex)">
+            <summary>
+            Validates sex parameter.
+            </summary>
+            <param name="sex">Sex to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateCount(System.Int16)">
+            <summary>
+            Validates count parameter.
+            </summary>
+            <param name="count">Count to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateCount(System.Decimal)">
+            <summary>
+            Validates count parameter.
+            </summary>
+            <param name="count">Count to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateCurrency(System.Char)">
+            <summary>
+            Validates currency symbol parameter.
+            </summary>
+            <param name="currency">Currency symbol to validate.</param>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetRecord">
+            <summary>
+            Provides properties for manipulating person's personal information.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Id">
+            <summary>
+            Gets or person's ID.
+            </summary>
+            <value>Person's ID.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.FirstName">
+            <summary>
+            Gets or sets person's first name.
+            </summary>
+            <value>Person's first name.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.LastName">
+            <summary>
+            Gets or sets person's last name.
+            </summary>
+            <value>Person's last name.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.DateOfBirth">
+            <summary>
+            Gets or sets person's date of birth.
+            </summary>
+            <value>Person's date of birth.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Sex">
+            <summary>
+            Gets or sets person's sex.
+            </summary>
+            <value>Person's sex.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.KidsCount">
+            <summary>
+            Gets or sets person's kids count.
+            </summary>
+            <value>The number of kids the person has.</value>>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Budget">
+            <summary>
+            Gets or sets person's budget.
+            </summary>
+            <value>Amount of money the person has.</value>>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Currency">
+            <summary>
+            Gets or sets currency.
+            </summary>
+            <value>The currency symbol of person's savings.</value>>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetService">
+            <summary>
+            This class provides methods to manipulate records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Adds a new record to the list.
+            </summary>
+            <param name="record">A record to add to the list.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when person's first or last name is null, empty or consists only of white-space characters.</exception>
+            <returns>The ID of the record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Allows user to edit the data of the record with <paramref name="id"/> ID.
+            </summary>
+            <param name="id">The ID of the record to edit.</param>
+            <param name="newRecord">A record to replace old one with.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when new record is null.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Searches for the records with the first name value equal to <paramref name="firstName"/>.
+            </summary>
+            <param name="firstName">The first name of the person.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when the first name if null.</exception>>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByLastName(System.String)">
+            <summary>
+            Searches for the records with the last name value equal to <paramref name="lastName"/>.
+            </summary>
+            <param name="lastName">The last name of the person.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when the last name if null.</exception>>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByDateOfBirth(System.DateTime)">
+            <summary>
+            Searches for the records with the date of birth value equal to <paramref name="dateOfBirth"/>.
+            </summary>
+            <param name="dateOfBirth">The date of birth of the person.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindBySex(FileCabinetApp.Sex)">
+            <summary>
+            Searches for the records with the sex value equal to <paramref name="sex"/>.
+            </summary>
+            <param name="sex">The sex of the person.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByKidsCount(System.Int16)">
+            <summary>
+            Searches for the records with the number of kids equal to <paramref name="kidsCount"/>.
+            </summary>
+            <param name="kidsCount">The number of kids the person has.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByBudget(System.Decimal,System.Char)">
+            <summary>
+            Searches for the records with the budget equal to <paramref name="amount"/> of <paramref name="currency"/>.
+            </summary>
+            <param name="amount">The amount of money the person has.</param>
+            <param name="currency">The currency symbol of person's savings.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
+            <summary>
+            Obtains the list of all records.
+            </summary>
+            <returns>The array of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetStat">
+            <summary>
+            Counts the number of records.
+            </summary>
+            <returns>The number of records.</returns>
+        </member>
+        <member name="T:FileCabinetApp.IFileCabinetService">
+            <summary>
+            An interface for FileCabinetService classes.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Adds a new record to the list.
+            </summary>
+            <param name="record">A record to add to the list.</param>
+            <returns>The ID of the record.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Allows user to edit the data of the record with <paramref name="id"/> ID.
+            </summary>
+            <param name="id">The ID of the record to edit.</param>
+            <param name="newRecord">A record to replace old one with.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Searches for the records with the first name value equal to <paramref name="firstName"/>.
+            </summary>
+            <param name="firstName">The first name of the person.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByLastName(System.String)">
+            <summary>
+            Searches for the records with the last name value equal to <paramref name="lastName"/>.
+            </summary>
+            <param name="lastName">The last name of the person.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByDateOfBirth(System.DateTime)">
+            <summary>
+            Searches for the records with the date of birth value equal to <paramref name="dateOfBirth"/>.
+            </summary>
+            <param name="dateOfBirth">The date of birth of the person.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindBySex(FileCabinetApp.Sex)">
+            <summary>
+            Searches for the records with the sex value equal to <paramref name="sex"/>.
+            </summary>
+            <param name="sex">The sex of the person.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByKidsCount(System.Int16)">
+            <summary>
+            Searches for the records with the number of kids equal to <paramref name="kidsCount"/>.
+            </summary>
+            <param name="kidsCount">The number of kids the person has.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.FindByBudget(System.Decimal,System.Char)">
+            <summary>
+            Searches for the records with the budget equal to <paramref name="amount"/> of <paramref name="currency"/>.
+            </summary>
+            <param name="amount">The amount of money the person has.</param>
+            <param name="currency">The currency symbol of person's savings.</param>
+            <returns>The array of records if they're found or an empty array if not.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetRecords">
+            <summary>
+            Obtains the list of all records.
+            </summary>
+            <returns>The array of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.GetStat">
+            <summary>
+            Counts the number of records.
+            </summary>
+            <returns>The number of records.</returns>
+        </member>
+        <member name="T:FileCabinetApp.IRecordValidator">
+            <summary>
+            Interface for validator classes.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Validates incoming parameters.
+            </summary>
+            <param name="record">Record parameter to validate.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="record"/>> is null.</exception>>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateName(System.String)">
+            <summary>
+            Validates name parameter.
+            </summary>
+            <param name="name">Name parameter to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateDateOfBirth(System.DateTime)">
+            <summary>
+            Validates date of birth parameter.
+            </summary>
+            <param name="dateOfBirth">Date of birth to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateSex(FileCabinetApp.Sex)">
+            <summary>
+            Validates sex parameter.
+            </summary>
+            <param name="sex">Sex to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateCount(System.Int16)">
+            <summary>
+            Validates count parameter.
+            </summary>
+            <param name="count">Count to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateCount(System.Decimal)">
+            <summary>
+            Validates count parameter.
+            </summary>
+            <param name="count">Count to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateCurrency(System.Char)">
+            <summary>
+            Validates currency symbol parameter.
+            </summary>
+            <param name="currency">Currency symbol to validate.</param>
+        </member>
+        <member name="T:FileCabinetApp.Program">
+            <summary>
+            Provides console file cabinet application.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Program.Main(System.String[])">
+            <summary>
+            Application's entry point.
+            </summary>
+            <param name="args">Command line arguments.</param>
+        </member>
+        <member name="T:FileCabinetApp.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.AvailableCommandsMessage">
+            <summary>
+              Looks up a localized string similar to Available commands:.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.BudgetEnteringRequest">
+            <summary>
+              Looks up a localized string similar to Budget (with currency sign): .
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.ConversionFailedMessage">
+            <summary>
+              Looks up a localized string similar to Conversion failed: {0}. Please, correct your input..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.CustomValidationRulesMessage">
+            <summary>
+              Looks up a localized string similar to Using custom validation rules..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.DateOfBirthEnteringRequest">
+            <summary>
+              Looks up a localized string similar to Date of birth: .
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.DefaultValidationRulesMessage">
+            <summary>
+              Looks up a localized string similar to Using default validation rules..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.ExitingMessage">
+            <summary>
+              Looks up a localized string similar to Exiting an application....
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.FirstNameEnteringRequest">
+            <summary>
+              Looks up a localized string similar to First name: .
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.GetHelpHint">
+            <summary>
+              Looks up a localized string similar to Enter your command, or enter &apos;help&apos; to get help..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.GreetingMessage">
+            <summary>
+              Looks up a localized string similar to File Cabinet Application, developed by {0}.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.HelpCommandDescriptionLine">
+            <summary>
+              Looks up a localized string similar to 	{0}	- {1}.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.InvalidCommandMessage">
+            <summary>
+              Looks up a localized string similar to There is no &apos;{0}&apos; command..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.InvalidIDMessage">
+            <summary>
+              Looks up a localized string similar to Invalid ID..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.InvalidPropertyMessage">
+            <summary>
+              Looks up a localized string similar to There is no {0} property. Type &apos;help find&apos; for further information..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.InvalidValueToSearchMessage">
+            <summary>
+              Looks up a localized string similar to The value to search for must be in double quotes (find [PROPERTY] &quot;&lt;YourValue&gt;&quot;)..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.KidsCountEnteringRequest">
+            <summary>
+              Looks up a localized string similar to Kids count: .
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.LastNameEnteringRequest">
+            <summary>
+              Looks up a localized string similar to Last name: .
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.NoRecordsMessage">
+            <summary>
+              Looks up a localized string similar to There are no records..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.ParameterIsInvalidMessage">
+            <summary>
+              Looks up a localized string similar to The {0} is invalid.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.ParameterIsNegativeMessage">
+            <summary>
+              Looks up a localized string similar to The {0} is negative.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.ParameterIsNullMessage">
+            <summary>
+              Looks up a localized string similar to The {0} is null..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.PersonalData">
+            <summary>
+              Looks up a localized string similar to #{0}, {1}, {2}, {3}, {4}, has {5} kids, budget : {6}{7}.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.PropertyValueNotFoundMessage">
+            <summary>
+              Looks up a localized string similar to There is no record with such value of the {0} property..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.RecordCreated">
+            <summary>
+              Looks up a localized string similar to Record #{0} is created. .
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.RecordNotFound">
+            <summary>
+              Looks up a localized string similar to Record #{0} is not found..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.RecordsCountMessage">
+            <summary>
+              Looks up a localized string similar to There are {0} records..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.RecordUpdated">
+            <summary>
+              Looks up a localized string similar to Record #{0} is updated..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.SexEnteringRequest">
+            <summary>
+              Looks up a localized string similar to Sex: .
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.StringIsNullOrWhiteSpaceMessage">
+            <summary>
+              Looks up a localized string similar to The {0} is null, empty or consists only of white-space characters..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.TypeCommandSign">
+            <summary>
+              Looks up a localized string similar to &gt; .
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.ValidationFailedMessage">
+            <summary>
+              Looks up a localized string similar to Validation failed: {0}. Please, correct your input..
+            </summary>
+        </member>
         <member name="T:FileCabinetApp.Sex">
             <summary>
             Represents person's sex.
