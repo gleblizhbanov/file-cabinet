@@ -23,6 +23,15 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> budgetDictionary = new ();
 
         /// <summary>
+        /// Creates a current state snapshot.
+        /// </summary>
+        /// <returns>A created snapshot.</returns>
+        public FileCabinetServiceSnapshot MakeSnapshot()
+        {
+            return new FileCabinetServiceSnapshot(this.list.ToArray());
+        }
+
+        /// <summary>
         /// Adds a new record to the list.
         /// </summary>
         /// <param name="record">A record to add to the list.</param>

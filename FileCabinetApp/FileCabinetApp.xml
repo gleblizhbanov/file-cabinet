@@ -90,6 +90,23 @@
             </summary>
             <param name="currency">Currency symbol to validate.</param>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetCsvWriter">
+            <summary>
+            Used to export data to csv file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetCsvWriter.#ctor(System.IO.StreamWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetCsvWriter"/> class.
+            </summary>
+            <param name="writer">A stream with opened file to export.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetCsvWriter.Write(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Writes record data to a file.
+            </summary>
+            <param name="record">A record to write to a file.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             Provides properties for manipulating person's personal information.
@@ -143,10 +160,34 @@
             </summary>
             <value>The currency symbol of person's savings.</value>>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordXmlWriter">
+            <summary>
+            Used to export data to xml file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.#ctor(System.Xml.XmlWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlWriter"/> class.
+            </summary>
+            <param name="xmlWriter">Writer with opened xml file to export data.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Write(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Writes record's data to an XML file.
+            </summary>
+            <param name="record">A record to write data.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the record is null.</exception>>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetService">
             <summary>
             This class provides methods to manipulate records.
             </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.MakeSnapshot">
+            <summary>
+            Creates a current state snapshot.
+            </summary>
+            <returns>A created snapshot.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.FileCabinetRecord)">
             <summary>
@@ -221,10 +262,39 @@
             </summary>
             <returns>The number of records.</returns>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetServiceSnapshot">
+            <summary>
+            Used for creating snapshots and exporting them to files.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.#ctor(FileCabinetApp.FileCabinetRecord[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> class.
+            </summary>
+            <param name="records">An array of records.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToCsv(System.IO.StreamWriter)">
+            <summary>
+            Exports snapshot data to a CSV file.
+            </summary>
+            <param name="writer">A stream writer with opened file.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToXml(System.Xml.XmlWriter)">
+            <summary>
+            Exports snapshot data to an XML file.
+            </summary>
+            <param name="writer">An XML writer with opened file.</param>
+        </member>
         <member name="T:FileCabinetApp.IFileCabinetService">
             <summary>
             An interface for FileCabinetService classes.
             </summary>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.MakeSnapshot">
+            <summary>
+            Creates a current state snapshot.
+            </summary>
+            <returns>Current cabinet state snapshot.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.FileCabinetRecord)">
             <summary>
@@ -380,9 +450,19 @@
               Looks up a localized string similar to Budget (with currency sign): .
             </summary>
         </member>
+        <member name="P:FileCabinetApp.Resources.CannotOpenFile">
+            <summary>
+              Looks up a localized string similar to Export failed: can&apos;t open file {0}.
+            </summary>
+        </member>
         <member name="P:FileCabinetApp.Resources.ConversionFailedMessage">
             <summary>
               Looks up a localized string similar to Conversion failed: {0}. Please, correct your input..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.CSVFormat">
+            <summary>
+              Looks up a localized string similar to {0},{1},{2},{3},{4},{5},{6},{7}.
             </summary>
         </member>
         <member name="P:FileCabinetApp.Resources.CustomValidationRulesMessage">
@@ -403,6 +483,11 @@
         <member name="P:FileCabinetApp.Resources.ExitingMessage">
             <summary>
               Looks up a localized string similar to Exiting an application....
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.FileExistsRewriteRequest">
+            <summary>
+              Looks up a localized string similar to File already exists. Do you want to rewrite {0}? [Y/N] : .
             </summary>
         </member>
         <member name="P:FileCabinetApp.Resources.FirstNameEnteringRequest">
@@ -428,6 +513,16 @@
         <member name="P:FileCabinetApp.Resources.InvalidCommandMessage">
             <summary>
               Looks up a localized string similar to There is no &apos;{0}&apos; command..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.InvalidFilePath">
+            <summary>
+              Looks up a localized string similar to The path to the file is invalid..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.InvalidFileType">
+            <summary>
+              Looks up a localized string similar to The file type parameter is invalid..
             </summary>
         </member>
         <member name="P:FileCabinetApp.Resources.InvalidIDMessage">
@@ -513,6 +608,11 @@
         <member name="P:FileCabinetApp.Resources.StringIsNullOrWhiteSpaceMessage">
             <summary>
               Looks up a localized string similar to The {0} is null, empty or consists only of white-space characters..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.SuccessfulExportMessage">
+            <summary>
+              Looks up a localized string similar to All records are exported to file {0}..
             </summary>
         </member>
         <member name="P:FileCabinetApp.Resources.TypeCommandSign">

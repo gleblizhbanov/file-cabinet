@@ -79,11 +79,29 @@ namespace FileCabinetApp {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export failed: can&apos;t open file {0}.
+        /// </summary>
+        internal static string CannotOpenFile {
+            get {
+                return ResourceManager.GetString("CannotOpenFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Conversion failed: {0}. Please, correct your input..
         /// </summary>
         internal static string ConversionFailedMessage {
             get {
                 return ResourceManager.GetString("ConversionFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0},{1},{2},{3},{4},{5},{6},{7}.
+        /// </summary>
+        internal static string CSVFormat {
+            get {
+                return ResourceManager.GetString("CSVFormat", resourceCulture);
             }
         }
         
@@ -120,6 +138,15 @@ namespace FileCabinetApp {
         internal static string ExitingMessage {
             get {
                 return ResourceManager.GetString("ExitingMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File already exists. Do you want to rewrite {0}? [Y/N] : .
+        /// </summary>
+        internal static string FileExistsRewriteRequest {
+            get {
+                return ResourceManager.GetString("FileExistsRewriteRequest", resourceCulture);
             }
         }
         
@@ -165,6 +192,24 @@ namespace FileCabinetApp {
         internal static string InvalidCommandMessage {
             get {
                 return ResourceManager.GetString("InvalidCommandMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The path to the file is invalid..
+        /// </summary>
+        internal static string InvalidFilePath {
+            get {
+                return ResourceManager.GetString("InvalidFilePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file type parameter is invalid..
+        /// </summary>
+        internal static string InvalidFileType {
+            get {
+                return ResourceManager.GetString("InvalidFileType", resourceCulture);
             }
         }
         
@@ -318,6 +363,15 @@ namespace FileCabinetApp {
         internal static string StringIsNullOrWhiteSpaceMessage {
             get {
                 return ResourceManager.GetString("StringIsNullOrWhiteSpaceMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All records are exported to file {0}..
+        /// </summary>
+        internal static string SuccessfulExportMessage {
+            get {
+                return ResourceManager.GetString("SuccessfulExportMessage", resourceCulture);
             }
         }
         

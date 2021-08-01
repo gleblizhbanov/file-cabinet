@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Xml;
 
 namespace FileCabinetApp
 {
@@ -14,30 +16,78 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
+
         private static readonly Tuple<string, Action<string>>[] Commands =
         {
-            new ("help", PrintHelp),
-            new ("stat", Stat),
-            new ("create", Create),
-            new ("edit", Edit),
-            new ("list", List),
-            new ("find", Find),
-            new ("exit", Exit),
+            new Tuple<string, Action<string>>("help", PrintHelp),
+            new Tuple<string, Action<string>>("stat", Stat),
+            new Tuple<string, Action<string>>("create", Create),
+            new Tuple<string, Action<string>>("edit", Edit),
+            new Tuple<string, Action<string>>("list", List),
+            new Tuple<string, Action<string>>("find", Find),
+            new Tuple<string, Action<string>>("export", Export),
+            new Tuple<string, Action<string>>("exit", Exit),
         };
 
         private static readonly string[][] HelpMessages =
         {
-            new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
-            new string[] { "stat", "prints the record count", "The 'stat' command prints the record count." },
-            new string[] { "create", "allows you to create a new record", "The 'create' command allows you to create a new record." },
-            new string[] { "edit", "allows you to edit an existing record", "The 'edit' command allows you to edit an existing record." },
-            new string[] { "list", "prints the list of all records", "The 'list' command prints the list of all records." },
-            new string[] { "find [PROPERTY]", "allows you to find all records with the given value of the property", $"The 'find' command allows you to find all records with the given value of the property.{Environment.NewLine}Valid properties : FirstName, LastName, DateOfBirth, Sex, KidsCount, Budget" },
-            new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
+            new string[]
+            {
+                "help",
+                "prints the help screen",
+                "The 'help' command prints the help screen.",
+            },
+            new string[]
+            {
+                "stat",
+                "prints the record count",
+                "The 'stat' command prints the record count.",
+            },
+            new string[]
+            {
+                "create",
+                "allows you to create a new record",
+                "The 'create' command allows you to create a new record.",
+            },
+            new string[]
+            {
+                "edit",
+                "allows you to edit an existing record",
+                "The 'edit' command allows you to edit an existing record.",
+            },
+            new string[]
+            {
+                "list",
+                "prints the list of all records",
+                "The 'list' command prints the list of all records.",
+            },
+            new string[]
+            {
+                "find [PROPERTY]",
+                "allows you to find all records with the given value of the property",
+                $"The 'find' command allows you to find all records with the given value of the property.{Environment.NewLine}Valid properties : FirstName, LastName, DateOfBirth, Sex, KidsCount, Budget",
+            },
+            new string[]
+            {
+                "export [FILETYPE]",
+                "exports the current cabinet state into a file of FILETYPE type.",
+                $"The 'export' command exports the current cabinet state into a file of FILETYPE type.{Environment.NewLine}Valid file types: CSV",
+            },
+            new string[]
+            {
+                "exit",
+                "exits the application",
+                "The 'exit' command exits the application.",
+            },
         };
 
         private static IFileCabinetService fileCabinetService;
         private static IRecordValidator validator;
+        private static XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
+        {
+            Indent = true,
+        };
+
         private static bool isRunning = true;
 
         /// <summary>
@@ -52,8 +102,10 @@ namespace FileCabinetApp
             }
 
             Console.WriteLine(Resources.GreetingMessage, DeveloperName);
-            if ((args.Length >= 2 && args[0] == "-v" && args[1].Equals("Custom", StringComparison.InvariantCultureIgnoreCase)) || (args.Length != 0 &&
-                args[0].StartsWith("--validation-rules=", StringComparison.InvariantCulture) && args[0].EndsWith("--validation-rules=Custom", StringComparison.InvariantCultureIgnoreCase)))
+            if ((args.Length >= 2 && args[0] == "-v" &&
+                 args[1].Equals("Custom", StringComparison.InvariantCultureIgnoreCase)) || (args.Length != 0 &&
+                args[0].StartsWith("--validation-rules=", StringComparison.InvariantCulture) && args[0]
+                    .EndsWith("--validation-rules=Custom", StringComparison.InvariantCultureIgnoreCase)))
             {
                 Console.WriteLine(Resources.CustomValidationRulesMessage);
                 validator = new CustomValidator();
@@ -326,6 +378,85 @@ namespace FileCabinetApp
             Console.WriteLine();
         }
 
+        private static void Export(string parameters)
+        {
+            var parametersArray = parameters.Split(' ', 2);
+            string fileType = parametersArray[0];
+            bool csv = false, xml = false;
+
+            if (!fileType.Equals("CSV", StringComparison.InvariantCultureIgnoreCase) &&
+                !fileType.Equals("XML", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Console.WriteLine(Resources.InvalidFileType);
+                Console.WriteLine();
+                return;
+            }
+
+            if (fileType.Equals("CSV", StringComparison.InvariantCultureIgnoreCase))
+            {
+                csv = true;
+            }
+            else
+            {
+                xml = true;
+            }
+
+            if (parametersArray.Length < 2)
+            {
+                Console.WriteLine(Resources.InvalidFilePath);
+                Console.WriteLine();
+                return;
+            }
+
+            string filePath = parametersArray[1];
+            if (File.Exists(filePath))
+            {
+                Console.Write(Resources.FileExistsRewriteRequest, filePath);
+                bool? rewrite = ReadInput(AnswerConverter, answer => answer is not null
+                            ? new Tuple<bool, string>(true, null)
+                            : new Tuple<bool, string>(false, string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsInvalidMessage, "answer")));
+
+                if (rewrite is not null && !rewrite.Value)
+                {
+                    return;
+                }
+            }
+
+            StreamWriter csvWriter = null;
+            XmlWriter xmlWriter = null;
+            var snapshot = fileCabinetService.MakeSnapshot();
+            try
+            {
+                if (csv)
+                {
+                    csvWriter = new StreamWriter(filePath, append: false);
+                    snapshot.SaveToCsv(csvWriter);
+                }
+                else if (xml)
+                {
+                    xmlWriter = XmlWriter.Create(filePath, xmlWriterSettings);
+                    snapshot.SaveToXml(xmlWriter);
+                }
+            }
+            catch (IOException)
+            {
+                Console.WriteLine(Resources.CannotOpenFile, filePath);
+                Console.WriteLine();
+                return;
+            }
+            finally
+            {
+                csvWriter?.Dispose();
+                xmlWriter?.Dispose();
+            }
+
+            csvWriter?.Close();
+            xmlWriter?.Close();
+
+            Console.WriteLine();
+            Console.WriteLine(Resources.SuccessfulExportMessage, filePath);
+        }
+
         private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
         {
             do
@@ -432,6 +563,23 @@ namespace FileCabinetApp
             }
 
             return new Tuple<bool, string>(true, null);
+        }
+
+        private static Tuple<bool, string, bool?> AnswerConverter(string answer)
+        {
+            if (answer.Equals("Yes", StringComparison.InvariantCultureIgnoreCase) ||
+                answer.Equals("Y", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return new Tuple<bool, string, bool?>(true, null, true);
+            }
+
+            if (answer.Equals("No", StringComparison.InvariantCultureIgnoreCase) ||
+                answer.Equals("N", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return new Tuple<bool, string, bool?>(true, null, false);
+            }
+
+            return new Tuple<bool, string, bool?>(true, string.Format(CultureInfo.InvariantCulture, Resources.ConversionFailedMessage, "The answer is not ('yes' / 'y') or ('no' / 'n')."), null);
         }
     }
 }

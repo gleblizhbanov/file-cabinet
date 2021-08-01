@@ -13,6 +13,12 @@ namespace FileCabinetApp
     public interface IFileCabinetService
     {
         /// <summary>
+        /// Creates a current state snapshot.
+        /// </summary>
+        /// <returns>Current cabinet state snapshot.</returns>
+        public FileCabinetServiceSnapshot MakeSnapshot();
+
+        /// <summary>
         /// Adds a new record to the list.
         /// </summary>
         /// <param name="record">A record to add to the list.</param>
