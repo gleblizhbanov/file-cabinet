@@ -90,6 +90,23 @@
             </summary>
             <param name="currency">Currency symbol to validate.</param>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetCsvWriter">
+            <summary>
+            Used to export data to csv file.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetCsvWriter.#ctor(System.IO.StreamWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetCsvWriter"/> class.
+            </summary>
+            <param name="writer">A stream with opened file to export.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetCsvWriter.Write(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Writes record data to a file.
+            </summary>
+            <param name="record">A record to write to a file.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             Provides properties for manipulating person's personal information.
@@ -225,6 +242,12 @@
             <summary>
             An interface for FileCabinetService classes.
             </summary>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.MakeSnapshot">
+            <summary>
+            Creates a current state snapshot.
+            </summary>
+            <returns>Current cabinet state snapshot.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.FileCabinetRecord)">
             <summary>
@@ -380,9 +403,19 @@
               Looks up a localized string similar to Budget (with currency sign): .
             </summary>
         </member>
+        <member name="P:FileCabinetApp.Resources.CannotOpenFile">
+            <summary>
+              Looks up a localized string similar to Export failed: can&apos;t open file {0}.
+            </summary>
+        </member>
         <member name="P:FileCabinetApp.Resources.ConversionFailedMessage">
             <summary>
               Looks up a localized string similar to Conversion failed: {0}. Please, correct your input..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.CSVFormat">
+            <summary>
+              Looks up a localized string similar to {0},{1},{2},{3},{4},{5},{6},{7}.
             </summary>
         </member>
         <member name="P:FileCabinetApp.Resources.CustomValidationRulesMessage">
@@ -403,6 +436,11 @@
         <member name="P:FileCabinetApp.Resources.ExitingMessage">
             <summary>
               Looks up a localized string similar to Exiting an application....
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.FileExistsRewriteRequest">
+            <summary>
+              Looks up a localized string similar to File already exists. Do you want to rewrite {0}? [Y/N] : .
             </summary>
         </member>
         <member name="P:FileCabinetApp.Resources.FirstNameEnteringRequest">
@@ -428,6 +466,16 @@
         <member name="P:FileCabinetApp.Resources.InvalidCommandMessage">
             <summary>
               Looks up a localized string similar to There is no &apos;{0}&apos; command..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.InvalidFilePath">
+            <summary>
+              Looks up a localized string similar to The path to the file is invalid..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.InvalidFileType">
+            <summary>
+              Looks up a localized string similar to The file type parameter is invalid..
             </summary>
         </member>
         <member name="P:FileCabinetApp.Resources.InvalidIDMessage">
@@ -513,6 +561,11 @@
         <member name="P:FileCabinetApp.Resources.StringIsNullOrWhiteSpaceMessage">
             <summary>
               Looks up a localized string similar to The {0} is null, empty or consists only of white-space characters..
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.SuccessfulExportMessage">
+            <summary>
+              Looks up a localized string similar to All records are exported to file {0}..
             </summary>
         </member>
         <member name="P:FileCabinetApp.Resources.TypeCommandSign">
