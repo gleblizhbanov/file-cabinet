@@ -22,6 +22,7 @@ namespace FileCabinetApp
         public FileCabinetCsvWriter(StreamWriter writer)
         {
             this.writer = writer;
+            this.writer.WriteLine(Resources.CSVFormat, "ID", "First Name", "Last Name", "Date Of Birth", "Sex", "Number of kids", "Currency", "Budget");
         }
 
         /// <summary>

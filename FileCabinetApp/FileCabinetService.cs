@@ -22,6 +22,10 @@ namespace FileCabinetApp
         private readonly Dictionary<short, List<FileCabinetRecord>> kidsCountDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> budgetDictionary = new ();
 
+        /// <summary>
+        /// Creates a current state snapshot.
+        /// </summary>
+        /// <returns>A created snapshot.</returns>
         public FileCabinetServiceSnapshot MakeSnapshot()
         {
             return new FileCabinetServiceSnapshot(this.list.ToArray());

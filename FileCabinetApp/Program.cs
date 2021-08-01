@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Xml;
 
 namespace FileCabinetApp
 {
@@ -82,6 +83,11 @@ namespace FileCabinetApp
 
         private static IFileCabinetService fileCabinetService;
         private static IRecordValidator validator;
+        private static XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
+        {
+            Indent = true,
+        };
+
         private static bool isRunning = true;
 
         /// <summary>
@@ -375,12 +381,24 @@ namespace FileCabinetApp
         private static void Export(string parameters)
         {
             var parametersArray = parameters.Split(' ', 2);
+            string fileType = parametersArray[0];
+            bool csv = false, xml = false;
 
-            if (!parametersArray[0].Equals("CSV", StringComparison.InvariantCultureIgnoreCase))
+            if (!fileType.Equals("CSV", StringComparison.InvariantCultureIgnoreCase) &&
+                !fileType.Equals("XML", StringComparison.InvariantCultureIgnoreCase))
             {
                 Console.WriteLine(Resources.InvalidFileType);
                 Console.WriteLine();
                 return;
+            }
+
+            if (fileType.Equals("CSV", StringComparison.InvariantCultureIgnoreCase))
+            {
+                csv = true;
+            }
+            else
+            {
+                xml = true;
             }
 
             if (parametersArray.Length < 2)
@@ -404,10 +422,21 @@ namespace FileCabinetApp
                 }
             }
 
-            StreamWriter writer = null;
+            StreamWriter csvWriter = null;
+            XmlWriter xmlWriter = null;
+            var snapshot = fileCabinetService.MakeSnapshot();
             try
             {
-                writer = new StreamWriter(filePath, append: false);
+                if (csv)
+                {
+                    csvWriter = new StreamWriter(filePath, append: false);
+                    snapshot.SaveToCsv(csvWriter);
+                }
+                else if (xml)
+                {
+                    xmlWriter = XmlWriter.Create(filePath, xmlWriterSettings);
+                    snapshot.SaveToXml(xmlWriter);
+                }
             }
             catch (IOException)
             {
@@ -417,12 +446,12 @@ namespace FileCabinetApp
             }
             finally
             {
-                writer?.Dispose();
+                csvWriter?.Dispose();
+                xmlWriter?.Dispose();
             }
 
-            var snapshot = fileCabinetService.MakeSnapshot();
-            snapshot.SaveToCsv(writer);
-            writer.Close();
+            csvWriter?.Close();
+            xmlWriter?.Close();
 
             Console.WriteLine();
             Console.WriteLine(Resources.SuccessfulExportMessage, filePath);
