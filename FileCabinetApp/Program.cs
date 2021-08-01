@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 
 namespace FileCabinetApp
 {
@@ -36,6 +37,7 @@ namespace FileCabinetApp
         };
 
         private static IFileCabinetService fileCabinetService;
+        private static IRecordValidator validator;
         private static bool isRunning = true;
 
         /// <summary>
@@ -54,13 +56,15 @@ namespace FileCabinetApp
                 args[0].StartsWith("--validation-rules=", StringComparison.InvariantCulture) && args[0].EndsWith("--validation-rules=Custom", StringComparison.InvariantCultureIgnoreCase)))
             {
                 Console.WriteLine(Resources.CustomValidationRulesMessage);
-                fileCabinetService = new FileCabinetService(new CustomValidator());
+                validator = new CustomValidator();
             }
             else
             {
                 Console.WriteLine(Resources.DefaultValidationRulesMessage);
-                fileCabinetService = new FileCabinetService(new DefaultValidator());
+                validator = new DefaultValidator();
             }
+
+            fileCabinetService = new FileCabinetService();
 
             Console.WriteLine(Resources.GetHelpHint);
             Console.WriteLine();
@@ -103,9 +107,9 @@ namespace FileCabinetApp
         {
             if (!string.IsNullOrEmpty(parameters))
             {
-                var index = Array.FindIndex(HelpMessages, 0, HelpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex].Split()[0], parameters.Split()[0], StringComparison.InvariantCultureIgnoreCase));
+                var index = Array.FindIndex(HelpMessages, 0, HelpMessages.Length, i => string.Equals(i[CommandHelpIndex].Split()[0], parameters.Split()[0], StringComparison.InvariantCultureIgnoreCase));
                 Console.WriteLine(index >= 0
-                    ? HelpMessages[index][Program.ExplanationHelpIndex]
+                    ? HelpMessages[index][ExplanationHelpIndex]
                     : $"There is no explanation for '{parameters}' command.");
             }
             else
@@ -136,66 +140,39 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
-            bool isValid = false;
-            do
+            Console.Write(Resources.FirstNameEnteringRequest);
+            string firstName = ReadInput(name => new Tuple<bool, string, string>(true, null, name), name => Validator(name, validator.ValidateName));
+
+            Console.Write(Resources.LastNameEnteringRequest);
+            string lastName = ReadInput(name => new Tuple<bool, string, string>(true, null, name), name => Validator(name, validator.ValidateName));
+
+            Console.Write(Resources.DateOfBirthEnteringRequest);
+            DateTime dateOfBirth = ReadInput(DateConverter, date => Validator(date, validator.ValidateDateOfBirth));
+
+            Console.Write(Resources.SexEnteringRequest);
+            Sex sex = ReadInput(SexConverter, conversionResult => Validator(conversionResult, validator.ValidateSex));
+
+            Console.Write(Resources.BudgetEnteringRequest);
+            Tuple<char, decimal> budget = ReadInput(BudgetConverter, BudgetValidator);
+
+            Console.Write(Resources.KidsCountEnteringRequest);
+            short kidsCount = ReadInput(CountConverter, count => Validator(count, validator.ValidateCount));
+
+            var record = new FileCabinetRecord()
             {
-                Console.Write(Resources.FirstNameEnteringRequest);
-                string firstName = Console.ReadLine();
+                Id = fileCabinetService.GetStat() + 1,
+                FirstName = firstName,
+                LastName = lastName,
+                DateOfBirth = dateOfBirth,
+                Sex = sex,
+                KidsCount = kidsCount,
+                Budget = budget.Item2,
+                Currency = budget.Item1,
+            };
 
-                Console.Write(Resources.LastNameEnteringRequest);
-                string lastName = Console.ReadLine();
+            int id = fileCabinetService.CreateRecord(record);
 
-                Console.Write(Resources.DateOfBirthEnteringRequest);
-                DateTime.TryParse(Console.ReadLine(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOfBirth);
-
-                Console.Write(Resources.SexEnteringRequest);
-                Enum.TryParse<Sex>(Console.ReadLine(), ignoreCase: true, out var sex);
-
-                Console.Write(Resources.BudgetEnteringRequest);
-                string budget = Console.ReadLine();
-
-                char currency;
-                decimal amount;
-                if (char.IsDigit(budget[0]))
-                {
-                    currency = budget[^1];
-                    decimal.TryParse(budget[..^1], NumberStyles.Currency, CultureInfo.InvariantCulture, out amount);
-                }
-                else
-                {
-                    currency = budget[0];
-                    decimal.TryParse(budget[1..], NumberStyles.Currency, CultureInfo.InvariantCulture, out amount);
-                }
-
-                Console.Write(Resources.KidsCountEnteringRequest);
-                short.TryParse(Console.ReadLine(), NumberStyles.None, CultureInfo.InvariantCulture, out var kidsCount);
-
-                try
-                {
-                    var record = new FileCabinetRecord()
-                    {
-                        Id = fileCabinetService.GetStat() + 1,
-                        FirstName = firstName,
-                        LastName = lastName,
-                        DateOfBirth = dateOfBirth,
-                        Sex = sex,
-                        KidsCount = kidsCount,
-                        Budget = amount,
-                        Currency = currency,
-                    };
-
-                    int id = fileCabinetService.CreateRecord(record);
-                    isValid = true;
-                    Console.WriteLine(Resources.RecordCreated, id);
-                }
-                catch (ArgumentException exception)
-                {
-                    Console.WriteLine(exception.Message.Split('.')[0] + '.');
-                }
-
-                Console.WriteLine();
-            }
-            while (!isValid);
+            Console.WriteLine(Resources.RecordCreated, id);
         }
 
         private static void Edit(string parameters)
@@ -214,66 +191,38 @@ namespace FileCabinetApp
                 return;
             }
 
-            bool isValid = false;
-            do
+            Console.Write(Resources.FirstNameEnteringRequest);
+            string firstName = ReadInput(name => new Tuple<bool, string, string>(true, null, name), name => Validator(name, validator.ValidateName));
+
+            Console.Write(Resources.LastNameEnteringRequest);
+            string lastName = ReadInput(name => new Tuple<bool, string, string>(true, null, name), name => Validator(name, validator.ValidateName));
+
+            Console.Write(Resources.DateOfBirthEnteringRequest);
+            DateTime dateOfBirth = ReadInput(DateConverter, date => Validator(date, validator.ValidateDateOfBirth));
+
+            Console.Write(Resources.SexEnteringRequest);
+            Sex sex = ReadInput(SexConverter, conversionResult => Validator(conversionResult, validator.ValidateSex));
+
+            Console.Write(Resources.BudgetEnteringRequest);
+            Tuple<char, decimal> budget = ReadInput(BudgetConverter, BudgetValidator);
+
+            Console.Write(Resources.KidsCountEnteringRequest);
+            short kidsCount = ReadInput(CountConverter, count => Validator(count, validator.ValidateCount));
+
+            var record = new FileCabinetRecord
             {
-                Console.Write(Resources.FirstNameEnteringRequest);
-                string firstName = Console.ReadLine();
+                Id = id,
+                FirstName = firstName,
+                LastName = lastName,
+                DateOfBirth = dateOfBirth,
+                Sex = sex,
+                KidsCount = kidsCount,
+                Budget = budget.Item2,
+                Currency = budget.Item1,
+            };
 
-                Console.Write(Resources.LastNameEnteringRequest);
-                string lastName = Console.ReadLine();
-
-                Console.Write(Resources.DateOfBirthEnteringRequest);
-                DateTime.TryParse(Console.ReadLine(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOfBirth);
-
-                Console.Write(Resources.SexEnteringRequest);
-                Enum.TryParse<Sex>(Console.ReadLine(), ignoreCase: true, out var sex);
-
-                Console.Write(Resources.BudgetEnteringRequest);
-                string budget = Console.ReadLine();
-
-                char currency;
-                decimal amount;
-                if (char.IsDigit(budget[0]))
-                {
-                    currency = budget[^1];
-                    decimal.TryParse(budget[..^1], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
-                }
-                else
-                {
-                    currency = budget[0];
-                    decimal.TryParse(budget[1..], NumberStyles.None, CultureInfo.InvariantCulture, out amount);
-                }
-
-                Console.Write(Resources.KidsCountEnteringRequest);
-                short.TryParse(Console.ReadLine(), NumberStyles.None, CultureInfo.InvariantCulture, out var kidsCount);
-
-                try
-                {
-                    var record = new FileCabinetRecord
-                    {
-                        Id = id,
-                        FirstName = firstName,
-                        LastName = lastName,
-                        DateOfBirth = dateOfBirth,
-                        Sex = sex,
-                        KidsCount = kidsCount,
-                        Budget = amount,
-                        Currency = currency,
-                    };
-
-                    fileCabinetService.EditRecord(id, record);
-                    Console.WriteLine(Resources.RecordUpdated, id);
-                    isValid = true;
-                }
-                catch (ArgumentException exception)
-                {
-                    Console.WriteLine(exception.Message.Split('.')[0] + '.');
-                }
-
-                Console.WriteLine();
-            }
-            while (!isValid);
+            fileCabinetService.EditRecord(id, record);
+            Console.WriteLine(Resources.RecordUpdated, id);
         }
 
         private static void Find(string parameters)
@@ -375,6 +324,114 @@ namespace FileCabinetApp
             }
 
             Console.WriteLine();
+        }
+
+        private static T ReadInput<T>(Func<string, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
+        {
+            do
+            {
+                var input = Console.ReadLine();
+                var conversionResult = converter(input);
+
+                if (!conversionResult.Item1)
+                {
+                    Console.WriteLine(Resources.ConversionFailedMessage, conversionResult.Item2);
+                    continue;
+                }
+
+                T value = conversionResult.Item3;
+
+                var validationResult = validator(value);
+                if (!validationResult.Item1)
+                {
+                    Console.WriteLine(Resources.ValidationFailedMessage, validationResult.Item2);
+                    continue;
+                }
+
+                return value;
+            }
+            while (true);
+        }
+
+        private static Tuple<bool, string> Validator<T>(T parameter, Action<T> parameterValidator)
+        {
+            try
+            {
+                parameterValidator(parameter);
+            }
+            catch (ArgumentException exception)
+            {
+                return new Tuple<bool, string>(false, exception.Message[..exception.Message.IndexOf(" (Parameter", StringComparison.InvariantCulture)]);
+            }
+
+            return new Tuple<bool, string>(true, null);
+        }
+
+        private static Tuple<bool, string, DateTime> DateConverter(string stringDate)
+        {
+            if (DateTime.TryParse(stringDate, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOfBirth))
+            {
+                return new Tuple<bool, string, DateTime>(true, null, dateOfBirth);
+            }
+
+            return new Tuple<bool, string, DateTime>(false, string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsInvalidMessage, "date of birth"), dateOfBirth);
+        }
+
+        private static Tuple<bool, string, Sex> SexConverter(string sexString)
+        {
+            if (Enum.TryParse<Sex>(sexString, ignoreCase: true, out var sex))
+            {
+                return new Tuple<bool, string, Sex>(true, null, sex);
+            }
+
+            return new Tuple<bool, string, Sex>(false, string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsInvalidMessage, "sex"), sex);
+        }
+
+        private static Tuple<bool, string, Tuple<char, decimal>> BudgetConverter(string budgetString)
+        {
+            char currency;
+            string message;
+            bool isSuccessful = false;
+            if ((!char.IsDigit(budgetString[0]) && decimal.TryParse(budgetString[1..], NumberStyles.None, CultureInfo.InvariantCulture, out var amountOfMoney)) ||
+                (!char.IsDigit(budgetString[^1]) && decimal.TryParse(budgetString[..^1], NumberStyles.None, CultureInfo.InvariantCulture, out amountOfMoney)))
+            {
+                message = null;
+                currency = budgetString.Single(i => !char.IsDigit(i));
+                isSuccessful = true;
+            }
+            else
+            {
+                message = "Invalid budget format";
+                currency = default;
+                amountOfMoney = default;
+            }
+
+            return new Tuple<bool, string, Tuple<char, decimal>>(isSuccessful, message, new Tuple<char, decimal>(currency, amountOfMoney));
+        }
+
+        private static Tuple<bool, string, short> CountConverter(string input)
+        {
+            if (short.TryParse(input, NumberStyles.None, CultureInfo.InvariantCulture, out var count))
+            {
+                return new Tuple<bool, string, short>(true, null, count);
+            }
+
+            return new Tuple<bool, string, short>(false, "Invalid count", count);
+        }
+
+        private static Tuple<bool, string> BudgetValidator(Tuple<char, decimal> budget)
+        {
+            try
+            {
+                validator.ValidateCurrency(budget.Item1);
+                validator.ValidateCount(budget.Item2);
+            }
+            catch (ArgumentException exception)
+            {
+                return new Tuple<bool, string>(false, exception.Message[..exception.Message.IndexOf(" (Parameter", StringComparison.InvariantCulture)]);
+            }
+
+            return new Tuple<bool, string>(true, null);
         }
     }
 }

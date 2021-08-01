@@ -13,64 +13,81 @@ namespace FileCabinetApp
     public class DefaultValidator : IRecordValidator
     {
         /// <summary>
-        /// Validates input parameters.
+        /// Validates name parameter.
         /// </summary>
-        /// <param name="record">Record parameter to validate.</param>
+        /// <param name="name">Name parameter to validate.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the name is null, empty or consists only of whitespace characters.</exception>
         /// <exception cref="ArgumentException">Thrown when the length of person's first or last name is less than 2 or greater than 60.</exception>
-        /// <exception cref="ArgumentException">Thrown when person's date of birth is before 1950-Jan-01 or after the current date.</exception>
-        /// <exception cref="ArgumentException">Thrown when person's sex value is not <see cref="Sex.Male"/> or <see cref="Sex.Female"/>.</exception>
-        /// <exception cref="ArgumentException">Thrown when person's kids count or person's amount of money is negative.</exception>
-        /// <exception cref="ArgumentException">Thrown when the currency symbol is not valid.</exception>
-        public void ValidateParameters(FileCabinetRecord record)
+        public void ValidateName(string name)
         {
-            if (record is null)
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentNullException(nameof(record), string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsNullMessage, "record"));
+                throw new ArgumentNullException(nameof(name), string.Format(CultureInfo.InvariantCulture, Resources.StringIsNullOrWhiteSpaceMessage, "name"));
             }
 
-            if (string.IsNullOrWhiteSpace(record.FirstName))
+            if (name.Length is < 2 or > 60)
             {
-                throw new ArgumentNullException(nameof(record), string.Format(CultureInfo.InvariantCulture, Resources.StringIsNullOrWhiteSpaceMessage, "first name"));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsInvalidMessage, "length of the name"), nameof(name));
             }
+        }
 
-            if (string.IsNullOrWhiteSpace(record.LastName))
+        /// <summary>
+        /// Validates date of birth parameter.
+        /// </summary>
+        /// <param name="dateOfBirth">Date of birth to validate.</param>
+        public void ValidateDateOfBirth(DateTime dateOfBirth)
+        {
+            if (dateOfBirth < new DateTime(1950, 1, 1) || dateOfBirth > DateTime.Now)
             {
-                throw new ArgumentNullException(nameof(record), string.Format(CultureInfo.InvariantCulture, Resources.StringIsNullOrWhiteSpaceMessage, "last name"));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsInvalidMessage, "date of birth"), nameof(dateOfBirth));
             }
+        }
 
-            if (record.FirstName.Length is < 2 or > 60)
+        /// <summary>
+        /// Validates sex parameter.
+        /// </summary>
+        /// <param name="sex">Sex to validate.</param>
+        public void ValidateSex(Sex sex)
+        {
+            if (sex is not Sex.Male and not Sex.Female)
             {
-                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsInvalidMessage, "length of the first name"), nameof(record));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsInvalidMessage, "sex"), nameof(sex));
             }
+        }
 
-            if (record.LastName.Length is < 2 or > 60)
+        /// <summary>
+        /// Validates count parameter.
+        /// </summary>
+        /// <param name="count">Count to validate.</param>
+        public void ValidateCount(short count)
+        {
+            if (count < 0)
             {
-                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsInvalidMessage, "length of the last name"), nameof(record));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsNegativeMessage, "count"), nameof(count));
             }
+        }
 
-            if (record.DateOfBirth < new DateTime(1950, 1, 1) || record.DateOfBirth > DateTime.Now)
+        /// <summary>
+        /// Validates count parameter.
+        /// </summary>
+        /// <param name="count">Count to validate.</param>
+        public void ValidateCount(decimal count)
+        {
+            if (count < 0)
             {
-                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsInvalidMessage, "date of birth"), nameof(record));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsNegativeMessage, "count"), nameof(count));
             }
+        }
 
-            if (record.Sex is not Sex.Male and not Sex.Female)
+        /// <summary>
+        /// Validates currency symbol parameter.
+        /// </summary>
+        /// <param name="currency">Currency symbol to validate.</param>
+        public void ValidateCurrency(char currency)
+        {
+            if (currency is not '$' and not '€' and not '¥' and not '£' and not '₩' and not '₿' and not '₽')
             {
-                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsInvalidMessage, "sex"), nameof(record));
-            }
-
-            if (record.Budget < 0)
-            {
-                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsNegativeMessage, "amount of money"), nameof(record));
-            }
-
-            if (record.KidsCount < 0)
-            {
-                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsNegativeMessage, "number of kids"), nameof(record));
-            }
-
-            if (record.Currency is not '$' and not '€' and not '¥' and not '£' and not '₩' and not '₿' and not '₽')
-            {
-                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsInvalidMessage, "currency symbol"), nameof(record));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsInvalidMessage, "currency symbol"), nameof(currency));
             }
         }
     }

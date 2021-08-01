@@ -167,7 +167,7 @@
     <value>There are no records.</value>
   </data>
   <data name="ParameterIsInvalidMessage" xml:space="preserve">
-    <value>The {0} is invalid.</value>
+    <value>The {0} is invalid</value>
     <comment>{0} - Parameter name.</comment>
   </data>
   <data name="ParameterIsNullMessage" xml:space="preserve">
@@ -209,13 +209,21 @@
     <value>&gt; </value>
   </data>
   <data name="ParameterIsNegativeMessage" xml:space="preserve">
-    <value>The {0} is negative.</value>
+    <value>The {0} is negative</value>
     <comment>{0} - Parameter name.</comment>
+  </data>
+  <data name="ConversionFailedMessage" xml:space="preserve">
+    <value>Conversion failed: {0}. Please, correct your input.</value>
+    <comment>{0} - Argument.</comment>
   </data>
   <data name="CustomValidationRulesMessage" xml:space="preserve">
     <value>Using custom validation rules.</value>
   </data>
   <data name="DefaultValidationRulesMessage" xml:space="preserve">
     <value>Using default validation rules.</value>
+  </data>
+  <data name="ValidationFailedMessage" xml:space="preserve">
+    <value>Validation failed: {0}. Please, correct your input.</value>
+    <comment>{0} - Argument.</comment>
   </data>
 </root>

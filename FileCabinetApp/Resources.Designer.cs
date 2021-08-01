@@ -79,6 +79,15 @@ namespace FileCabinetApp {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Conversion failed: {0}. Please, correct your input..
+        /// </summary>
+        internal static string ConversionFailedMessage {
+            get {
+                return ResourceManager.GetString("ConversionFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Using custom validation rules..
         /// </summary>
         internal static string CustomValidationRulesMessage {
@@ -214,7 +223,7 @@ namespace FileCabinetApp {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The {0} is invalid..
+        ///   Looks up a localized string similar to The {0} is invalid.
         /// </summary>
         internal static string ParameterIsInvalidMessage {
             get {
@@ -223,7 +232,7 @@ namespace FileCabinetApp {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The {0} is negative..
+        ///   Looks up a localized string similar to The {0} is negative.
         /// </summary>
         internal static string ParameterIsNegativeMessage {
             get {
@@ -318,6 +327,15 @@ namespace FileCabinetApp {
         internal static string TypeCommandSign {
             get {
                 return ResourceManager.GetString("TypeCommandSign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validation failed: {0}. Please, correct your input..
+        /// </summary>
+        internal static string ValidationFailedMessage {
+            get {
+                return ResourceManager.GetString("ValidationFailedMessage", resourceCulture);
             }
         }
     }

@@ -15,23 +15,12 @@ namespace FileCabinetApp
     {
         private readonly List<FileCabinetRecord> list = new ();
 
-        private readonly IRecordValidator validator;
-
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new ();
         private readonly Dictionary<DateTime, List<FileCabinetRecord>> dateOfBirthDictionary = new ();
         private readonly Dictionary<Sex, List<FileCabinetRecord>> sexDictionary = new ();
         private readonly Dictionary<short, List<FileCabinetRecord>> kidsCountDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> budgetDictionary = new ();
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
-        /// </summary>
-        /// <param name="validator">Validator object implementing <see cref="IRecordValidator"/> interface.</param>
-        public FileCabinetService(IRecordValidator validator)
-        {
-            this.validator = validator;
-        }
 
         /// <summary>
         /// Adds a new record to the list.
@@ -46,7 +35,6 @@ namespace FileCabinetApp
                 throw new ArgumentNullException(nameof(record), string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsNullMessage, "record"));
             }
 
-            this.validator.ValidateParameters(record);
             this.list.Add(record);
 
             AddRecordToTheDictionary(this.firstNameDictionary, key: record.FirstName.ToUpperInvariant(), record);
@@ -71,8 +59,6 @@ namespace FileCabinetApp
             {
                 throw new ArgumentNullException(nameof(newRecord), string.Format(CultureInfo.InvariantCulture, Resources.ParameterIsNullMessage, "record"));
             }
-
-            this.validator.ValidateParameters(newRecord);
 
             var record = this.list[id - 1];
 
@@ -228,7 +214,7 @@ namespace FileCabinetApp
         {
             if (newRecord.DateOfBirth != record.DateOfBirth)
             {
-                this.dateOfBirthDictionary[newRecord.DateOfBirth].Remove(record);
+                this.dateOfBirthDictionary[record.DateOfBirth].Remove(record);
                 record.DateOfBirth = newRecord.DateOfBirth;
                 AddRecordToTheDictionary(this.dateOfBirthDictionary, key: newRecord.DateOfBirth, record);
             }
@@ -238,7 +224,7 @@ namespace FileCabinetApp
         {
             if (newRecord.Sex != record.Sex)
             {
-                this.sexDictionary[newRecord.Sex].Remove(record);
+                this.sexDictionary[record.Sex].Remove(record);
                 record.Sex = newRecord.Sex;
                 AddRecordToTheDictionary(this.sexDictionary, key: newRecord.Sex, record);
             }
@@ -248,7 +234,7 @@ namespace FileCabinetApp
         {
             if (newRecord.KidsCount != record.KidsCount)
             {
-                this.kidsCountDictionary[newRecord.KidsCount].Remove(record);
+                this.kidsCountDictionary[record.KidsCount].Remove(record);
                 record.KidsCount = newRecord.KidsCount;
                 AddRecordToTheDictionary(this.kidsCountDictionary, key: newRecord.KidsCount, record);
             }

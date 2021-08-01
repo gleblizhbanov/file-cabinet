@@ -9,34 +9,86 @@
             Used to validate parameters using custom rules.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.CustomValidator.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
+        <member name="M:FileCabinetApp.CustomValidator.ValidateName(System.String)">
             <summary>
-            Validates input parameters.
+            Validates name parameter.
             </summary>
-            <param name="record">Record parameter to validate.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown when the record is null.</exception>
-            <exception cref="T:System.ArgumentNullException">Thrown when the first or the last.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when the length of person's first or last name is less than 2 or greater than 20.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when person's date of birth is 120+ years before current date or after the current date.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when person's sex value is not <see cref="F:FileCabinetApp.Sex.Male"/> or <see cref="F:FileCabinetApp.Sex.Female"/>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when person's kids count or person's amount of money is negative.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when the currency symbol is not valid.</exception>
+            <param name="name">Name parameter to validate.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the name is null, empty or consists only of whitespace characters.</exception>
+            <exception cref="T:System.ArgumentException">Thrown when the length of person's first or last name is less than 2 or greater than 60.</exception>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.ValidateDateOfBirth(System.DateTime)">
+            <summary>
+            Validates date of birth parameter.
+            </summary>
+            <param name="dateOfBirth">Date of birth to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.ValidateSex(FileCabinetApp.Sex)">
+            <summary>
+            Validates sex parameter.
+            </summary>
+            <param name="sex">Sex to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.ValidateCount(System.Int16)">
+            <summary>
+            Validates count parameter.
+            </summary>
+            <param name="count">Count to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.ValidateCount(System.Decimal)">
+            <summary>
+            Validates count parameter.
+            </summary>
+            <param name="count">Count to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.ValidateCurrency(System.Char)">
+            <summary>
+            Validates currency symbol parameter.
+            </summary>
+            <param name="currency">Currency symbol to validate.</param>
         </member>
         <member name="T:FileCabinetApp.DefaultValidator">
             <summary>
             Used to validate parameters using default rules.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.DefaultValidator.ValidateParameters(FileCabinetApp.FileCabinetRecord)">
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateName(System.String)">
             <summary>
-            Validates input parameters.
+            Validates name parameter.
             </summary>
-            <param name="record">Record parameter to validate.</param>
+            <param name="name">Name parameter to validate.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the name is null, empty or consists only of whitespace characters.</exception>
             <exception cref="T:System.ArgumentException">Thrown when the length of person's first or last name is less than 2 or greater than 60.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when person's date of birth is before 1950-Jan-01 or after the current date.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when person's sex value is not <see cref="F:FileCabinetApp.Sex.Male"/> or <see cref="F:FileCabinetApp.Sex.Female"/>.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when person's kids count or person's amount of money is negative.</exception>
-            <exception cref="T:System.ArgumentException">Thrown when the currency symbol is not valid.</exception>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateDateOfBirth(System.DateTime)">
+            <summary>
+            Validates date of birth parameter.
+            </summary>
+            <param name="dateOfBirth">Date of birth to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateSex(FileCabinetApp.Sex)">
+            <summary>
+            Validates sex parameter.
+            </summary>
+            <param name="sex">Sex to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateCount(System.Int16)">
+            <summary>
+            Validates count parameter.
+            </summary>
+            <param name="count">Count to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateCount(System.Decimal)">
+            <summary>
+            Validates count parameter.
+            </summary>
+            <param name="count">Count to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.ValidateCurrency(System.Char)">
+            <summary>
+            Validates currency symbol parameter.
+            </summary>
+            <param name="currency">Currency symbol to validate.</param>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -95,12 +147,6 @@
             <summary>
             This class provides methods to manipulate records.
             </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.#ctor(FileCabinetApp.IRecordValidator)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService"/> class.
-            </summary>
-            <param name="validator">Validator object implementing <see cref="T:FileCabinetApp.IRecordValidator"/> interface.</param>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.FileCabinetRecord)">
             <summary>
@@ -259,6 +305,43 @@
             Validates incoming parameters.
             </summary>
             <param name="record">Record parameter to validate.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="record"/>> is null.</exception>>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateName(System.String)">
+            <summary>
+            Validates name parameter.
+            </summary>
+            <param name="name">Name parameter to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateDateOfBirth(System.DateTime)">
+            <summary>
+            Validates date of birth parameter.
+            </summary>
+            <param name="dateOfBirth">Date of birth to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateSex(FileCabinetApp.Sex)">
+            <summary>
+            Validates sex parameter.
+            </summary>
+            <param name="sex">Sex to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateCount(System.Int16)">
+            <summary>
+            Validates count parameter.
+            </summary>
+            <param name="count">Count to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateCount(System.Decimal)">
+            <summary>
+            Validates count parameter.
+            </summary>
+            <param name="count">Count to validate.</param>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.ValidateCurrency(System.Char)">
+            <summary>
+            Validates currency symbol parameter.
+            </summary>
+            <param name="currency">Currency symbol to validate.</param>
         </member>
         <member name="T:FileCabinetApp.Program">
             <summary>
@@ -295,6 +378,11 @@
         <member name="P:FileCabinetApp.Resources.BudgetEnteringRequest">
             <summary>
               Looks up a localized string similar to Budget (with currency sign): .
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.ConversionFailedMessage">
+            <summary>
+              Looks up a localized string similar to Conversion failed: {0}. Please, correct your input..
             </summary>
         </member>
         <member name="P:FileCabinetApp.Resources.CustomValidationRulesMessage">
@@ -374,12 +462,12 @@
         </member>
         <member name="P:FileCabinetApp.Resources.ParameterIsInvalidMessage">
             <summary>
-              Looks up a localized string similar to The {0} is invalid..
+              Looks up a localized string similar to The {0} is invalid.
             </summary>
         </member>
         <member name="P:FileCabinetApp.Resources.ParameterIsNegativeMessage">
             <summary>
-              Looks up a localized string similar to The {0} is negative..
+              Looks up a localized string similar to The {0} is negative.
             </summary>
         </member>
         <member name="P:FileCabinetApp.Resources.ParameterIsNullMessage">
@@ -430,6 +518,11 @@
         <member name="P:FileCabinetApp.Resources.TypeCommandSign">
             <summary>
               Looks up a localized string similar to &gt; .
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Resources.ValidationFailedMessage">
+            <summary>
+              Looks up a localized string similar to Validation failed: {0}. Please, correct your input..
             </summary>
         </member>
         <member name="T:FileCabinetApp.Sex">
